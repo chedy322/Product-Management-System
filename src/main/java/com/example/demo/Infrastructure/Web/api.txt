@@ -1,0 +1,34 @@
+//Products
+
+/Base URL: api/v1/products
+//These methods should be imdepotent(except POST)
+//NOTE: PATCH is idempotent allowing field updates
+
+
+-GET /products ?page (pagination)
+                200 ok([] in case empty)
+                
+
+
+-POST /products (success 201,failure 400) 
+                201 created return location header with URI
+                400 Bad Request(Invalid data)
+
+
+-GET /products/{id} (success 200 ,failure 404)
+                200 ok 
+                404 Not Found
+
+
+-DELETE /products/{id}(success 204,failure 404)
+                204 Deleted
+                404 Resource Not Found
+
+
+-PATCH /products/{id}(success 200,failure 400)
+                200 ok .Partial update
+                404 Not Found (Ref id)
+                400 Bad request(Invalid data Ref data in body)
+                422 Business logic violation(example:"Cannot discount more than 50%")
+
+

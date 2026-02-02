@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface ProductRepository {
    // Create & Update
-    void save(Product product);
+    Product save(Product product);
 
     // Read
     Optional<Product> findById(UUID id); 
@@ -16,5 +16,5 @@ public interface ProductRepository {
     List<Product> findAll();
 
     // Delete
-    void deleteById(UUID id);
+    boolean deleteById(UUID id);
 }

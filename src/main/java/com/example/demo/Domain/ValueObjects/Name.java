@@ -3,6 +3,7 @@ package com.example.demo.Domain.ValueObjects;
 import java.util.List;
 
 import com.example.demo.Domain.Primitives.ValueObject;
+import com.example.demo.Domain.shared.Result;
 
 public class Name extends ValueObject{
     private final String value;
@@ -16,15 +17,19 @@ public class Name extends ValueObject{
     }
 
     // creating the constructor
-    public static Name create (String value){
+    public static Result<Name> create (String value){
+        if(value==null || value.isEmpty()){
+            return Result.Failure("Name cannot be null or empty");
+        }
         if(value.length()<4){
-            throw new IllegalArgumentException("Name cannot be less than 4");
+            return Result.Failure("Name cannot be less than 4 characters");
+            
         }
         if(value.length()>10){
-            throw new IllegalArgumentException("Name cannot be longer than 10");
+            return Result.Failure("Name cannot be longer than 10");
         }
         Name name=new Name(value);
-        return name;
+        return Result.Success(name);
     }
 
     public String getValue(){return value;}
