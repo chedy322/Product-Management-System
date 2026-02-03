@@ -14,15 +14,18 @@ import com.example.demo.Domain.Entities.Product;
 import com.example.demo.Domain.Interfaces.ProductRepository;
 import com.example.demo.Domain.ValueObjects.Name;
 import com.example.demo.Domain.ValueObjects.Stock;
+import com.example.demo.Domain.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
 
 
 @Service
 public class ProductService {
     private ProductRepository productRepository;
+    private CheckProductNameUniqueness checkProductNameUniqueness;
 
-    public ProductService(ProductRepository productRepository ){
+    public ProductService(ProductRepository productRepository,CheckProductNameUniqueness CheckProductNameUniqueness ){
         this.productRepository=productRepository;
+        this.checkProductNameUniqueness=CheckProductNameUniqueness;
     }
 
     // create
@@ -33,6 +36,12 @@ public class ProductService {
             return Result.Failure(nameResult.getError());
         }
         Name name=nameResult.getValue();
+
+        // check the product name uniqueness first
+        Result<Boolean> productNameisUnique=checkProductNameUniqueness.productNameIsUnique(name);
+        if(productNameisUnique.isFailure()){
+            return Result.Failure(productNameisUnique.getError());
+        }
 
         // Create stock value object
         Result<Stock> stockResult=Stock.create(productRequest.stock());
@@ -55,9 +64,7 @@ public class ProductService {
 
         // Save the prodct to db
         Product savedProduct= productRepository.save(product);
-        if(savedProduct==null){
-            return Result.Failure(" Product not created");
-        }
+
         ProductResponse productResponse=ProductResponse.mapToResponse(savedProduct);
         return Result.Success(productResponse);
     }
@@ -119,16 +126,10 @@ public class ProductService {
         ProductResponse productResponse=ProductResponse.mapToResponse(product); 
 
         // send success result
-        return Result.Success(productResponse)
+        return Result.Success(productResponse);
 
 
     }
-
-    // delete by id
-
-
-
-
 
 
 

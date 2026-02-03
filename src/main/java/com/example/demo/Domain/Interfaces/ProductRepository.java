@@ -1,6 +1,7 @@
 package com.example.demo.Domain.Interfaces;
 
 import com.example.demo.Domain.Entities.Product;
+import com.example.demo.Domain.ValueObjects.Name;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface ProductRepository {
 
     // Read
     Optional<Product> findById(UUID id); 
-    
+    Optional<Product> findByName(Name name);
     List<Product> findAll();
 
     // Delete
