@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.example.demo.Domain.Primitives.ValueObject;
 import com.example.demo.Domain.shared.Result;
+import com.example.demo.Domain.shared.Error;
 
 public final class Stock extends ValueObject{
     private final int value;
@@ -21,7 +22,8 @@ public final class Stock extends ValueObject{
 
     public static Result<Stock> create(int stockValue){
         if(stockValue<0){
-            return Result.Failure("Stock cannot be Negative");
+            // return Result.Failure("Stock cannot be Negative");
+            return Result.Failure(Error.VALIDATION_ERROR("Stock cannot be Negative"));
         }
         Stock stock=new Stock(stockValue);
         return Result.Success(stock);
@@ -30,7 +32,7 @@ public final class Stock extends ValueObject{
 
     public Result<Stock> addStock(int amount){
         if(this.value+amount<0){
-            return Result.Failure("Insufficient stock");
+            return Result.Failure(Error.VALIDATION_ERROR("Insufficient stock"));
         }
         Stock stock=new Stock(this.value+amount);
         return Result.Success(stock);

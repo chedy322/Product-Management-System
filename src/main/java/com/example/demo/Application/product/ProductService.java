@@ -16,6 +16,7 @@ import com.example.demo.Domain.ValueObjects.Name;
 import com.example.demo.Domain.ValueObjects.Stock;
 import com.example.demo.Domain.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
+import com.example.demo.Domain.shared.Error;
 
 
 @Service
@@ -74,12 +75,12 @@ public class ProductService {
         // check if the product exists or no
         Optional<Product> productResult=productRepository.findById(id);
         if(productResult.isEmpty()){
-            return Result.Failure("Product not found");
+            return Result.Failure(Error.NOT_FOUND("Product not found"));
         }
        boolean productDeleted= productRepository.deleteById(id);
-       if(!productDeleted){
-         return Result.Failure("Product was not deleted");
-       }
+    //    if(!productDeleted){
+    //      return Result.Failure("Product was not deleted");
+    //    }
        return Result.Success(true);
     }
 
@@ -95,7 +96,7 @@ public class ProductService {
         // check if the product exists in db
         Optional<Product> productResult=productRepository.findById(productId);
         if(productResult.isEmpty()){
-            return Result.Failure("Product does not exists");
+            return Result.Failure(Error.NOT_FOUND("Product does not exists"));
         }
 
         // DTO
@@ -108,7 +109,8 @@ public class ProductService {
         // check for the product in db
         Optional<Product> productResult=productRepository.findById(productId);
         if(productResult.isEmpty()){
-            return Result.Failure("Product does not exist");
+            // return Result.Failure("Product does not exist");
+            return Result.Failure(Error.NOT_FOUND("Product does not exist"));
         }
         if(request.name()!=null){
             

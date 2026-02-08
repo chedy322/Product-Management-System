@@ -3,9 +3,9 @@ package com.example.demo.Domain.shared;
 public class Result <T>{
     private final boolean success;
     private final T value;
-    private final String error;
+    private final Error error;
 
-    private Result (boolean success,T value,String error){
+    private Result (boolean success,T value,Error error){
         this.success=success;
         this.value=value;
         this.error=error;
@@ -21,14 +21,14 @@ public class Result <T>{
     public T getValue(){
         return value;
     }
-    public String getError(){
+    public Error getError(){
         return error;
     }
     
     public static <T> Result<T> Success(T value){
         return new Result<>(true, value, null);
     }
-    public static<T> Result<T> Failure(String error ){
+    public static<T> Result<T> Failure(Error error ){
         return new Result<>(false,null,error);
     }
 
