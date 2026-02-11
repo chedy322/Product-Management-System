@@ -16,7 +16,6 @@ public class CheckProductNameUniqueness {
     public Result<Boolean> productNameIsUnique(Name name){
         Optional <Product> product=productRepository.findByName(name);
         if(!product.isEmpty()){
-            // return Result.Failure("Product name already exists");
             return Result.Failure(Error.CONFLICT("Product name already exists"));
         }
         return Result.Success(true);

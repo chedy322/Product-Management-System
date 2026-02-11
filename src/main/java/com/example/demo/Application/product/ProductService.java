@@ -18,6 +18,8 @@ import com.example.demo.Domain.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.shared.Error;
 
+import jakarta.transaction.Transactional;
+
 
 @Service
 public class ProductService {
@@ -30,6 +32,7 @@ public class ProductService {
     }
 
     // create
+    @Transactional
     public Result<ProductResponse> create(ProductRequest productRequest){
         // Create name valeu object
         Result<Name> nameResult=Name.create(productRequest.name()); 
@@ -71,6 +74,7 @@ public class ProductService {
     }
 
     // delete
+    @Transactional 
     public Result<Boolean> deleteById(UUID id){
         // check if the product exists or no
         Optional<Product> productResult=productRepository.findById(id);

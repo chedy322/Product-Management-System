@@ -18,7 +18,7 @@ public final class Stock extends ValueObject{
         return List.of(value);
     }
 
-    public int getStock(){ return value;}
+    public int getValue(){ return value;}
 
     public static Result<Stock> create(int stockValue){
         if(stockValue<0){

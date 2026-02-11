@@ -10,10 +10,10 @@ public record ProductResponse(
 ){
     public static ProductResponse mapToResponse(Product product){
         return new ProductResponse(
-            product.getName(),
+            product.getName().getValue(),
             product.getDescription(),
             product.getPrice(),
-            product.getStock()
+            product.getStock().getValue(),
         );
     }
 }
