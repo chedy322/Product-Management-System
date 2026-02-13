@@ -7,21 +7,22 @@ import java.util.UUID;
 
 import com.example.demo.Domain.shared.DomainEvent;
 
+// abstract so we cannot create instance of this entity
 public abstract class Aggregate extends Entity {
     private final List<DomainEvent> domainEvents=new ArrayList<>();
     protected Aggregate(UUID id){
         super(id);
     }
 
-    protected List<Object> getDomainEvents(){
+    public List<Object> getDomainEvents(){
         return Collections.unmodifiableList(domainEvents);
     }
 
-    protected void registerEvent(DomainEvent domainEvent){
+    public void registerEvent(DomainEvent domainEvent){
         domainEvents.add(domainEvent);
     }
 
-    protected void deleteEvents(){
+    public void deleteEvents(){
         domainEvents.clear();
     }
 

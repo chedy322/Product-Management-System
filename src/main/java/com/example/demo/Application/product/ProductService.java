@@ -11,11 +11,13 @@ import com.example.demo.Application.product.dto.ProductRequest;
 import com.example.demo.Application.product.dto.ProductResponse;
 import com.example.demo.Application.product.dto.UpdateProductRequest;
 import com.example.demo.Domain.Entities.Product;
+import com.example.demo.Domain.Interfaces.DomainEventPublisher;
 import com.example.demo.Domain.Interfaces.ProductRepository;
 import com.example.demo.Domain.ValueObjects.Name;
 import com.example.demo.Domain.ValueObjects.Stock;
 import com.example.demo.Domain.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
+import com.example.demo.Infrastructure.messages.EventsDispatcher;
 import com.example.demo.Domain.shared.Error;
 
 import jakarta.transaction.Transactional;
@@ -25,10 +27,13 @@ import jakarta.transaction.Transactional;
 public class ProductService {
     private ProductRepository productRepository;
     private CheckProductNameUniqueness checkProductNameUniqueness;
+    private DomainEventPublisher domainEventPublisher;
 
-    public ProductService(ProductRepository productRepository,CheckProductNameUniqueness CheckProductNameUniqueness ){
+
+    public ProductService(ProductRepository productRepository,CheckProductNameUniqueness CheckProductNameUniqueness,DomainEventPublisher domainEventPublisher ){
         this.productRepository=productRepository;
         this.checkProductNameUniqueness=CheckProductNameUniqueness;
+        this.domainEventPublisher=domainEventPublisher;
     }
 
     // create
@@ -68,6 +73,9 @@ public class ProductService {
 
         // Save the prodct to db
         Product savedProduct= productRepository.save(product);
+
+        // dispatch product created event 
+        domainEventPublisher.dispatch(product);
 
         ProductResponse productResponse=ProductResponse.mapToResponse(savedProduct);
         return Result.Success(productResponse);
