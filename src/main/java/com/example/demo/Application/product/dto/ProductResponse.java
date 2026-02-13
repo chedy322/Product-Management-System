@@ -1,6 +1,6 @@
 package com.example.demo.Application.product.dto;
 
-import com.example.demo.Domain.Entities.Product;
+import com.example.demo.Domain.product.Entities.Product;
 
 public record ProductResponse(
     String name,

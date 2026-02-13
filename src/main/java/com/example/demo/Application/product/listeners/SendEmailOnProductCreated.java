@@ -4,7 +4,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import com.example.demo.Domain.events.ProductCreated;
+import com.example.demo.Domain.product.events.ProductCreated;
 
 @Component
 public class SendEmailOnProductCreated {

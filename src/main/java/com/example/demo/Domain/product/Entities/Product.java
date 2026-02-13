@@ -1,12 +1,12 @@
-package com.example.demo.Domain.Entities;
+package com.example.demo.Domain.product.Entities;
 
 import java.util.UUID;
 
 import com.example.demo.Domain.Primitives.Entity;
 import com.example.demo.Domain.Primitives.Aggregate;
-import com.example.demo.Domain.ValueObjects.Name;
-import com.example.demo.Domain.ValueObjects.Stock;
-import com.example.demo.Domain.events.ProductCreated;
+import com.example.demo.Domain.product.ValueObjects.Name;
+import com.example.demo.Domain.product.ValueObjects.Stock;
+import com.example.demo.Domain.product.events.ProductCreated;
 import com.example.demo.Domain.shared.Result;
 
 public class Product extends Aggregate{

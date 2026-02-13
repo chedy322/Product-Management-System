@@ -1,4 +1,4 @@
-package com.example.demo.Domain.shared;
+package com.example.demo.Domain.Interfaces;
 
 // event 
 

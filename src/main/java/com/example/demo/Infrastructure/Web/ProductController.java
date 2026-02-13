@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.demo.Application.product.ProductService;
 import com.example.demo.Application.product.dto.ProductRequest;
-import com.example.demo.Domain.Entities.Product;
 
 import jakarta.validation.Valid;
 
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.Application.product.dto.ProductResponse;
 import com.example.demo.Domain.exceptions.DomainExceptions;
+import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.shared.Error;
 

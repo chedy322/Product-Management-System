@@ -1,4 +1,4 @@
-package com.example.demo.Domain.ValueObjects;
+package com.example.demo.Domain.product.ValueObjects;
 
 import java.util.List;
 

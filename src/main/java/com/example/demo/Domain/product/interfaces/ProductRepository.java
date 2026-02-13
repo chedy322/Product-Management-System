@@ -1,7 +1,7 @@
-package com.example.demo.Domain.Interfaces;
+package com.example.demo.Domain.product.interfaces;
 
-import com.example.demo.Domain.Entities.Product;
-import com.example.demo.Domain.ValueObjects.Name;
+import com.example.demo.Domain.product.Entities.Product;
+import com.example.demo.Domain.product.ValueObjects.Name;
 
 import java.util.List;
 import java.util.Optional;

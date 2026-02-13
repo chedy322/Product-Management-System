@@ -10,16 +10,14 @@ import org.springframework.stereotype.Service;
 import com.example.demo.Application.product.dto.ProductRequest;
 import com.example.demo.Application.product.dto.ProductResponse;
 import com.example.demo.Application.product.dto.UpdateProductRequest;
-import com.example.demo.Domain.Entities.Product;
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
-import com.example.demo.Domain.Interfaces.ProductRepository;
-import com.example.demo.Domain.ValueObjects.Name;
-import com.example.demo.Domain.ValueObjects.Stock;
-import com.example.demo.Domain.service.CheckProductNameUniqueness;
+import com.example.demo.Domain.product.Entities.Product;
+import com.example.demo.Domain.product.ValueObjects.Name;
+import com.example.demo.Domain.product.ValueObjects.Stock;
+import com.example.demo.Domain.product.interfaces.ProductRepository;
+import com.example.demo.Domain.product.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
-import com.example.demo.Infrastructure.messages.EventsDispatcher;
 import com.example.demo.Domain.shared.Error;
-
 import jakarta.transaction.Transactional;
 
 
