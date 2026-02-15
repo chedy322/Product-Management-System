@@ -54,6 +54,7 @@ public class UserEntity {
         this.password=password;
     }
     public long getId(){return id;}
+    public void setId(Long id){this.id=id;}
     public String getEmail(){return email;}
     public String getPassword(){return password;}
     public UserRole getRole(){return role;}

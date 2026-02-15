@@ -13,6 +13,9 @@ public class UserMapper {
     // Transform User entity in domain in UserEntity in db
     public static UserEntity toUserEntity(User userDomain){
         UserEntity userEntity=new UserEntity(userDomain.getEmail(),userDomain.getPassword());
+        if(userDomain.getId()!=null){
+            userEntity.setId(userDomain.getId());
+        }
         if(userDomain.getRole()!=null){
             userEntity.setRole(userDomain.getRole());
         }
