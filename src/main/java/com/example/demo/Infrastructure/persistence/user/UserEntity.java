@@ -2,7 +2,7 @@ package com.example.demo.Infrastructure.persistence.user;
 
 
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,16 +17,20 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name="users")
 public class UserEntity {
     public UserEntity(){}
-   
+    
+
+    // Fix this to UUID 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
+    @Email
     @Column(unique = true,length =100,nullable = false)
     private String email;
 

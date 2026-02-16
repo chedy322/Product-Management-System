@@ -30,6 +30,10 @@ public class Product extends Aggregate{
         product.registerEvent(new ProductCreated(product.getId(),product.getName()));
         return Result.Success(product);
     }
+    public static Result<Product> reconstruct(UUID id,Name name,String description,int price,Stock stock){
+         Product product=new Product(id,name, description, price, stock);
+        return Result.Success(product);
+    }
 
     // getter
     public Name getName() {return name;}

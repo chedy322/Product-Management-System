@@ -19,6 +19,7 @@ public class UserMapper {
         if(userDomain.getRole()!=null){
             userEntity.setRole(userDomain.getRole());
         }
+        // CHECK THIS setBlocked
         userEntity.setBlocked(userDomain.isBlocked());
         return userEntity;
 
