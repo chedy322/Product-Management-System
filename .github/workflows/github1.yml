@@ -5,39 +5,51 @@ on:
         paths-ignore: ["*.md"]
     pull_request:
         branches: [main]
-env:
-    JAVA_VERSION: 25
+# env:
+#     JAVA_VERSION: 25
 
 
 jobs:
     test:
+        strategy:
+            matrix:
+                os: [windows-latest,ubuntu-latest]
+                java: [17,21,25]
+        uses: ./.github/workflows/test-workflow.yml
+        with:
+            os: ${{matrix.os}}
+            java: ${{matrix.java}}
+
+
+# TODO CREATE THE BUILD PIPELINE
+    build: 
+        name: Build application
+        needs: test
         runs-on: ubuntu-latest
         steps:
-        -   name: Checkout code
+        -   name: Checkout the repository
             uses: actions/checkout@v4
 
-        -   name: Set up JDK 21 # Or your version
+        -   name: Set up Java ${{env.JAVA_VERSION}}
             uses: actions/setup-java@v4
             with:
                 java-version: ${{env.JAVA_VERSION}}
                 distribution: 'temurin'
                 cache: maven
 
-        -   name: Run tests
-            run: mvn clean verify
-
-        -   name: Upload artifact
+        # run the build
+        -   name: run build
+            run: mvn clean package -DskipTests
+        
+        -   name: Save the artifact
             uses: actions/upload-artifact@v4
             with:
-                name: app-jar
+                name: spring-boot-app
                 path: target/*.jar
 
-        -   name: Upload Test Report
-            uses: actions/upload-artifact@v4
-            if: always()
-            with:
-                name: junit-reports
-                path: target/surefire-reports/
 
-# TODO CREATE THE BUILD PIPELINE
+
+
+
+
     
