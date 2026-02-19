@@ -1,4 +1,4 @@
-nam: Test workflow
+name: Test workflow
 
 on:
   workflow_call:
@@ -6,7 +6,7 @@ on:
       java:
         type: string
         required: true
-        default: 21
+        default: "21"
       os:
         type: string
         required: true
@@ -19,6 +19,7 @@ jobs:
         name: Run tests
         runs-on: ${{inputs.os}}
         steps:
+
         -   name: Checkout code
             uses: actions/checkout@v4
 
@@ -36,5 +37,6 @@ jobs:
             uses: actions/upload-artifact@v4
             if: always()
             with:
-                name: junit-reports
+                name: junit-reports ${{inputs.os}} ${{inputs.java}}
                 path: target/surefire-reports/
+        

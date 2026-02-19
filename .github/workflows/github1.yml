@@ -1,20 +1,24 @@
 name: CI/Cd for Product Management System
 on:
     push:
-        branches: [main,develop]
+        branches: [main,develop,feature/ci-cd-pipeline]
         paths-ignore: ["*.md"]
     pull_request:
         branches: [main]
-# env:
-#     JAVA_VERSION: 25
 
+env:
+    JAVA_VERSION: 21
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
     test:
         strategy:
             matrix:
                 os: [windows-latest,ubuntu-latest]
-                java: [17,21,25]
+                java: [17,21]
         uses: ./.github/workflows/test-workflow.yml
         with:
             os: ${{matrix.os}}
@@ -27,6 +31,7 @@ jobs:
         needs: test
         runs-on: ubuntu-latest
         steps:
+
         -   name: Checkout the repository
             uses: actions/checkout@v4
 
@@ -46,7 +51,13 @@ jobs:
             with:
                 name: spring-boot-app
                 path: target/*.jar
-
+    deploy:
+        name: Deploy to production
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        runs-on: ubuntu-latest
+        steps:
+            -   name: deploying message
+                run: echo "Deploying to production ..."
 
 
 
