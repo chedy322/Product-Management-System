@@ -7,7 +7,7 @@ on:
         branches: [main]
 
 env:
-    JAVA_VERSION: 21
+    JAVA_VERSION: 25
 
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
@@ -18,7 +18,7 @@ jobs:
         strategy:
             matrix:
                 os: [windows-latest,ubuntu-latest]
-                java: [17,21]
+                java: [17,21,25]
         uses: ./.github/workflows/test-workflow.yml
         with:
             os: ${{matrix.os}}
