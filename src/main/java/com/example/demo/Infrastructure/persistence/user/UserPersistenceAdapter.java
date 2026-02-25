@@ -1,8 +1,11 @@
 package com.example.demo.Infrastructure.persistence.user;
+import java.lang.classfile.ClassFile.Option;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Repository;
+import com.example.demo.Infrastructure.persistence.user.UserMapper;
 
 import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Domain.user.interfaces.UserRepository;
@@ -34,15 +37,22 @@ public class UserPersistenceAdapter implements UserRepository{
     }
 
     @Override
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(UUID id) {
         Optional<UserEntity> userEntity=jpaUserRepository.findById(id);
         Optional<User> user=userEntity.map(UserMapper::toDomain);
         return user;
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
        jpaUserRepository.deleteById(id);
         
+    }
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        Optional<UserEntity> userEntity=jpaUserRepository.findByEmail(email);
+        Optional<User> user=userEntity.map(UserMapper::toDomain);
+        return user;
     }
 }

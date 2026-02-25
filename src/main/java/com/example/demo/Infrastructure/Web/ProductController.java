@@ -39,7 +39,7 @@ public class ProductController {
         this.productService=productService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getProducts() {
         // Implementation for creating a product
         Result<List<ProductResponse>> productsResult= productService.findAll();
@@ -68,7 +68,7 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createProduct(@Valid @RequestBody ProductRequest entity) {
         Result<ProductResponse> createdProduct = productService.create(entity);
         if(createdProduct.isFailure()){

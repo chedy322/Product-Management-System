@@ -27,8 +27,8 @@ public class UserEntity {
 
     // Fix this to UUID 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    // @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private UUID id;
 
     @Email
     @Column(unique = true,length =100,nullable = false)
@@ -57,8 +57,8 @@ public class UserEntity {
         this.email=email;
         this.password=password;
     }
-    public long getId(){return id;}
-    public void setId(Long id){this.id=id;}
+    public UUID getId(){return id;}
+    public void setId(UUID id){this.id=id;}
     public String getEmail(){return email;}
     public String getPassword(){return password;}
     public UserRole getRole(){return role;}

@@ -2,12 +2,16 @@ package com.example.demo.Domain.product.service;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Service;
+
 import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.product.ValueObjects.Name;
 import com.example.demo.Domain.product.interfaces.ProductRepository;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.shared.Error;
 
+
+@Service
 public class CheckProductNameUniqueness {
     private final ProductRepository productRepository;
     public CheckProductNameUniqueness(ProductRepository ProductRepository){

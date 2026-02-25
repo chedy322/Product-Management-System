@@ -2,10 +2,13 @@ package com.example.demo.Domain.user.entities;
 
 import com.example.demo.Infrastructure.config.Enum.UserRole;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
+import com.example.demo.Domain.Primitives.Aggregate;
+import com.example.demo.Domain.user.events.UserCreated;
 
-public class User {
-    private final Long id; // Final because the identity shouldn't change
+public class User extends Aggregate{
+    // private final UUID id; 
     private String email;
     private String password;
     private UserRole role;
@@ -14,9 +17,9 @@ public class User {
     private LocalDateTime updatedAt;
 
     // Comprehensive Constructor for the Mapper/Repository to use
-    private User(Long id, String email, String password, UserRole role, 
+    private User(UUID id, String email, String password, UserRole role, 
                 boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
+            super(id);
         this.email = email;
         this.password = password;
         this.role = role;
@@ -25,12 +28,14 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public static User create(Long id, String email, String password, UserRole role, 
+    public static User create(UUID id, String email, String password, UserRole role, 
                 boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt){
                     // TODO 
                     // create validate email method
                     // check if email exists in the db 
                 User user= new User(id,email,password,role,blocked,createdAt,updatedAt);
+                // register user created event
+                user.registerEvent(new UserCreated(user.getId(),user.getCreatedAt(),user.getEmail()));
                 return user;
     }
 
@@ -54,7 +59,7 @@ public class User {
 
     // --- GETTERS ---
 
-    public Long getId() { return id; }
+    public UUID getId() { return this.getId(); }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public UserRole getRole() { return role; }

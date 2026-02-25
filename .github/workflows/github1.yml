@@ -9,6 +9,7 @@ on:
 env:
     JAVA_VERSION: 25
 
+    # added concurrency so when we start new workflow we stop the previous one
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -19,6 +20,7 @@ jobs:
             matrix:
                 os: [windows-latest,ubuntu-latest]
                 java: [17,21,25]
+            fail-fast: false
         uses: ./.github/workflows/test-workflow.yml
         with:
             os: ${{matrix.os}}

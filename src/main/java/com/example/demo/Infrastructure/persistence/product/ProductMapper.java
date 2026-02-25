@@ -38,6 +38,7 @@ public class ProductMapper {
         ProductEntity productEntity=new ProductEntity(product.getName().getValue(), 
         product.getPrice(), product.getStock().getValue(), product.getDescription());
 
+        // for update,in case the id exists we will pass so db doesnt create new entity
         if(product.getId()!=null){
             productEntity.setId(product.getId());
         }
