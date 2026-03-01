@@ -13,4 +13,9 @@ public interface UserRepository {
     public List<User> findAll();
     public void deleteById(Long id);
     public User save(User user);
+<<<<<<< HEAD
+=======
+    public Optional<User> findByEmail(String email);
+    public Optional<User> findByUsername(String username);
+>>>>>>> 52f4d37 (Feat:Adde user service)
 }

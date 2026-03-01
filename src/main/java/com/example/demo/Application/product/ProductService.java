@@ -88,10 +88,7 @@ public class ProductService {
             return Result.Failure(Error.NOT_FOUND("Product not found"));
         }
        boolean productDeleted= productRepository.deleteById(id);
-    //    if(!productDeleted){
-    //      return Result.Failure("Product was not deleted");
-    //    }
-       return Result.Success(true);
+       return Result.Success(productDeleted);
     }
 
 
@@ -122,14 +119,14 @@ public class ProductService {
             // return Result.Failure("Product does not exist");
             return Result.Failure(Error.NOT_FOUND("Product does not exist"));
         }
-        if(request.name()!=null){
-            
+        if(request.name()!=null ){
+            productResult.get().updateName(request.name());
         }
-        if(request.name()!=null){
-
-        }
-        if(request.name()!=null){
-
+        // if(Integer.toString(request.price())!=null ){
+        //     pro
+        // }
+        if(Integer.toString(request.stock())!=null ){
+            productResult.get().updateStock(request.stock());
         }
 
         // save the changes to db

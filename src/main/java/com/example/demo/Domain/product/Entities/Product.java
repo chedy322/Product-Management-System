@@ -48,6 +48,15 @@ public class Product extends Aggregate{
         return Result.Success(stock);
 
     }   
+
+    public Result<Name> updateName(String Inputname){
+        Result<Name> newName=Name.create(Inputname);
+        if(newName.isFailure()){
+            return Result.Failure(newName.getError());
+        }
+        this.name=newName.getValue();
+        return Result.Success(name);
+    }
     
 
 

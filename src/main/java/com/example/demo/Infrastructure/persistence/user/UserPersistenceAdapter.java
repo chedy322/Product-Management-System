@@ -45,4 +45,23 @@ public class UserPersistenceAdapter implements UserRepository{
        jpaUserRepository.deleteById(id);
         
     }
+<<<<<<< HEAD
+=======
+
+    @Override
+    public Optional<User> findByEmail(String email) {
+        Optional<UserEntity> userEntity=jpaUserRepository.findByEmail(email);
+        Optional<User> user=userEntity.map(UserMapper::toDomain);
+        return user;
+    }
+    @Override
+    public Optional<User> findByUsername(String username) {
+        Optional<UserEntity> userEntity=jpaUserRepository.findByUsername(username);
+        Optional<User> user=userEntity.map(UserMapper::toDomain);
+        return user;
+
+    }
+
+
+>>>>>>> 52f4d37 (Feat:Adde user service)
 }
