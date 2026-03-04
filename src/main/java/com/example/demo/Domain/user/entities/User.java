@@ -2,21 +2,15 @@ package com.example.demo.Domain.user.entities;
 
 import com.example.demo.Infrastructure.config.Enum.UserRole;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
-<<<<<<< HEAD
-
-public class User {
-    private final Long id; // Final because the identity shouldn't change
-=======
 import com.example.demo.Domain.Primitives.Aggregate;
 import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.user.events.UserCreated;
 
-public class User extends Aggregate{
-    // private final UUID id; 
+public class User extends Aggregate{ 
     private String username;
->>>>>>> 52f4d37 (Feat:Adde user service)
     private String email;
     private String password;
     private UserRole role=UserRole.USER;
@@ -25,15 +19,9 @@ public class User extends Aggregate{
     private LocalDateTime updatedAt;
 
     // Comprehensive Constructor for the Mapper/Repository to use
-<<<<<<< HEAD
-    private User(Long id, String email, String password, UserRole role, 
-                boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.id = id;
-=======
     private User(UUID id, String email, String password, UserRole role, 
                 boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt,String username) {
             super(id);
->>>>>>> 52f4d37 (Feat:Adde user service)
         this.email = email;
         this.password = password;
         this.role = role;
@@ -43,22 +31,12 @@ public class User extends Aggregate{
         this.username=username;
     }
 
-<<<<<<< HEAD
-    public static User create(Long id, String email, String password, UserRole role, 
-                boolean blocked, LocalDateTime createdAt, LocalDateTime updatedAt){
-                    // TODO 
-                    // create validate email method
-                    // check if email exists in the db 
-                User user= new User(id,email,password,role,blocked,createdAt,updatedAt);
-                return user;
-=======
     public static Result<User> create(String email, String password,String username){
         LocalDateTime currenDateTime=LocalDateTime.now();
                 User user= new User(UUID.randomUUID(),email,password,UserRole.USER,false,currenDateTime,currenDateTime,username);
                 // register user created event
                 user.registerEvent(new UserCreated(user.getId(),user.getCreatedAt(),user.getEmail(),user.getUsername()));
                 return Result.Success(user);
->>>>>>> 52f4d37 (Feat:Adde user service)
     }
 
     public static Result<User> reconstruct(UUID id, String email, String password, UserRole role, 
@@ -107,11 +85,7 @@ public class User extends Aggregate{
 
     // --- GETTERS ---
 
-<<<<<<< HEAD
-    public Long getId() { return id; }
-=======
     public UUID getId() { return super.getId(); }
->>>>>>> 52f4d37 (Feat:Adde user service)
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public UserRole getRole() { return role; }

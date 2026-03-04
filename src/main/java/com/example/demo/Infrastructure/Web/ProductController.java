@@ -19,9 +19,11 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.example.demo.Application.product.dto.ProductResponse;
+import com.example.demo.Application.product.dto.UpdateProductRequest;
 import com.example.demo.Domain.exceptions.DomainExceptions;
 import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.shared.Result;
@@ -39,7 +41,7 @@ public class ProductController {
         this.productService=productService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<?> getProducts() {
         // Implementation for creating a product
         Result<List<ProductResponse>> productsResult= productService.findAll();
@@ -68,7 +70,7 @@ public class ProductController {
         return ResponseEntity.ok().body(product);
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<?> createProduct(@Valid @RequestBody ProductRequest entity) {
         Result<ProductResponse> createdProduct = productService.create(entity);
         if(createdProduct.isFailure()){
@@ -90,6 +92,17 @@ public class ProductController {
         }
         return ResponseEntity.status(201).body("Product deleted successfully");
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProduct(@PathVariable("id") UUID productId,@RequestBody UpdateProductRequest productRequest) {
+            Result<ProductResponse> productUpdateResult=productService.updateProduct(productId, productRequest);
+            if(productUpdateResult.isFailure()){
+                Error error=productUpdateResult.getError();
+                 throw new DomainExceptions(error);
+            }
+            return ResponseEntity.status(204).body(productUpdateResult);
+    }
+    
 
     
 

@@ -1,11 +1,15 @@
 package com.example.demo.Domain.user.services;
 
 import java.util.Optional;
+
+import org.springframework.stereotype.Component;
+
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.user.interfaces.UserRepository;
 import com.example.demo.Domain.user.entities.User;
 
+@Component
 public class CheckUsernameUniqueness {
     private final UserRepository userRepository;
 

@@ -10,7 +10,6 @@ import com.example.demo.Application.user.dto.UserResponse;
 import com.example.demo.Application.user.dto.UserRequest;
 import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Domain.user.interfaces.UserRepository;
-import com.example.demo.Domain.user.services.CheckUserEmailUniqueness;
 import com.example.demo.Domain.user.services.CheckUsernameUniqueness;
 
 import jakarta.transaction.Transactional;
@@ -22,10 +21,10 @@ import com.example.demo.Domain.shared.Result;
 @Service
 public class UserService {
     private UserRepository userRepository;
-    private CheckUserEmailUniqueness checkUserEmailUniqueness;
+    private CheckUsernameUniqueness checkUserEmailUniqueness;
     private CheckUsernameUniqueness checkUsernameUniqueness;
     private DomainEventPublisher domainEventPublisher;
-    public UserService(UserRepository userRepository,CheckUserEmailUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness){
+    public UserService(UserRepository userRepository,CheckUsernameUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness){
         this.userRepository=userRepository;
         this.checkUserEmailUniqueness=checkUserEmailUniqueness;
         this.checkUsernameUniqueness=checkUsernameUniqueness;
@@ -55,14 +54,14 @@ public class UserService {
         return Result.Success(userRepository.findAll().stream().map(UserResponse::UserMapper).toList());
     }
 
-    public Result<User> findById(UUID userId){
-        // Optional<User> userRe
-    }
+    // public Result<User> findById(UUID userId){
+    //     // Optional<User> userRe
+    // }
 
-    public Result<boolean> deleById(){
+    // public Result<boolean> deleById(){
 
-    }
-    public Result<UserResponse> updateUser(){
+    // }
+    // public Result<UserResponse> updateUser(){
 
-    }
+    // }
 }

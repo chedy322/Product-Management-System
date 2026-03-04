@@ -73,7 +73,7 @@ public class ProductService {
         Product savedProduct= productRepository.save(product);
 
         // dispatch product created event 
-        domainEventPublisher.dispatch(product);
+        domainEventPublisher.dispatch(savedProduct);
 
         ProductResponse productResponse=ProductResponse.mapToResponse(savedProduct);
         return Result.Success(productResponse);
@@ -125,7 +125,10 @@ public class ProductService {
         // if(Integer.toString(request.price())!=null ){
         //     pro
         // }
-        if(Integer.toString(request.stock())!=null ){
+        // if(Integer.toString(request.stock())!=null ){
+        //     productResult.get().updateStock(request.stock());
+        // }
+        if(request.stock()!=null){
             productResult.get().updateStock(request.stock());
         }
 

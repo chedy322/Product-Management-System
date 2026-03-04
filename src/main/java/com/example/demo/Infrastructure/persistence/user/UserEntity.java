@@ -2,7 +2,7 @@ package com.example.demo.Infrastructure.persistence.user;
 
 
 import java.time.LocalDateTime;
-
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -17,38 +17,27 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-<<<<<<< HEAD
-=======
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
->>>>>>> 52f4d37 (Feat:Adde user service)
 
 @Entity
 @NoArgsConstructor
 @Data
 @Table(name="users")
 public class UserEntity {
-<<<<<<< HEAD
-    public UserEntity(){}
-   
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private long id;
-=======
-    
      public UserEntity(String username,String email,String password){
         this.email=email;
         this.password=password;
         this.username=username;
     }
-    // Fix this to UUID 
     @Id
+    // @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
->>>>>>> 52f4d37 (Feat:Adde user service)
 
+    @Email
     @Column(unique = true,length =100,nullable = false)
     private String email;
 
@@ -74,22 +63,6 @@ public class UserEntity {
     private LocalDateTime updatedAt;
     
 
-<<<<<<< HEAD
-    public UserEntity(String email,String password){
-        this.email=email;
-        this.password=password;
-    }
-    public long getId(){return id;}
-    public void setId(Long id){this.id=id;}
-    public String getEmail(){return email;}
-    public String getPassword(){return password;}
-    public UserRole getRole(){return role;}
-    public boolean getBlocked(){return blocked;}
-    public void setRole(UserRole role){this.role=role;}
-    public void setBlocked(boolean blocked){this.blocked=blocked;}
-    public LocalDateTime getCreatedAt(){return createdAt;}
-    public LocalDateTime getUpDatedAt(){return updatedAt;}
-=======
    
     // public UUID getId(){return id;}
     // public void setId(UUID id){this.id=id;}
@@ -102,5 +75,4 @@ public class UserEntity {
     // public void setBlocked(boolean blocked){this.blocked=blocked;}
     // public LocalDateTime getCreatedAt(){return createdAt;}
     // public LocalDateTime getUpDatedAt(){return updatedAt;}
->>>>>>> 52f4d37 (Feat:Adde user service)
 }
