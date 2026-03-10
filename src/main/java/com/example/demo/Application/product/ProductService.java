@@ -19,9 +19,11 @@ import com.example.demo.Domain.product.service.CheckProductNameUniqueness;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.shared.Error;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 
 
 @Service
+@Slf4j
 public class ProductService {
     private ProductRepository productRepository;
     private CheckProductNameUniqueness checkProductNameUniqueness;
@@ -95,6 +97,7 @@ public class ProductService {
 
     // findall
     public Result<List<ProductResponse>> findAll(){
+        log.info("Extracting products data");
        return Result.Success(productRepository.findAll().stream().map(ProductResponse::mapToResponse).toList());
     }
 
@@ -112,26 +115,33 @@ public class ProductService {
 
     }
     // update by id by field 
+    @Transactional
     public Result<ProductResponse> updateProduct(UUID productId,UpdateProductRequest request){
         // check for the product in db
         Optional<Product> productResult=productRepository.findById(productId);
+        Product productDomain=productResult.get();
         if(productResult.isEmpty()){
             // return Result.Failure("Product does not exist");
             return Result.Failure(Error.NOT_FOUND("Product does not exist"));
         }
-        if(request.name()!=null ){
-            productResult.get().updateName(request.name());
+        if(request.name()!=null){
+            Result<Name> productDomainName=productDomain.updateName(request.name());
+            if(productDomainName.isFailure()){
+                 return Result.Failure(productDomainName.getError());
+
+            }
         }
-        // if(Integer.toString(request.price())!=null ){
-        //     pro
-        // }
-        // if(Integer.toString(request.stock())!=null ){
-        //     productResult.get().updateStock(request.stock());
-        // }
+      
         if(request.stock()!=null){
-            productResult.get().updateStock(request.stock());
+             Result<Stock> productDomainStock=productDomain.updateStock(request.stock());
+            if(productDomainStock.isFailure()){
+                 return Result.Failure(productDomainStock.getError());
+
+            }
         }
 
+        // add price
+   
         // save the changes to db
         Product product=productRepository.save(productResult.get());
         // DTO

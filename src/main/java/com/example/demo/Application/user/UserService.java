@@ -10,21 +10,23 @@ import com.example.demo.Application.user.dto.UserResponse;
 import com.example.demo.Application.user.dto.UserRequest;
 import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Domain.user.interfaces.UserRepository;
+import com.example.demo.Domain.user.services.CheckUserEmailUniqueness;
 import com.example.demo.Domain.user.services.CheckUsernameUniqueness;
 
 import jakarta.transaction.Transactional;
 
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
+import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
 
 
 @Service
 public class UserService {
     private UserRepository userRepository;
-    private CheckUsernameUniqueness checkUserEmailUniqueness;
+    private CheckUserEmailUniqueness checkUserEmailUniqueness;
     private CheckUsernameUniqueness checkUsernameUniqueness;
     private DomainEventPublisher domainEventPublisher;
-    public UserService(UserRepository userRepository,CheckUsernameUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness){
+    public UserService(UserRepository userRepository,CheckUserEmailUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness){
         this.userRepository=userRepository;
         this.checkUserEmailUniqueness=checkUserEmailUniqueness;
         this.checkUsernameUniqueness=checkUsernameUniqueness;
@@ -33,6 +35,13 @@ public class UserService {
 
     @Transactional
     public Result<UserResponse> create(UserRequest userRequest){
+        // check user email uniqueness
+        Result<Boolean> emailIsUniqueResult=checkUserEmailUniqueness.CheckEmailUniqueness(userRequest.email());
+        if(emailIsUniqueResult.isFailure()){
+            return Result.Failure(emailIsUniqueResult.getError());
+
+        }
+        // check user name is unique TODO 
         Result<User> userResult=User.create(userRequest.email(), userRequest.password(),userRequest.username());
         if(userResult.isFailure()){
             return Result.Failure(userResult.getError());
@@ -54,9 +63,19 @@ public class UserService {
         return Result.Success(userRepository.findAll().stream().map(UserResponse::UserMapper).toList());
     }
 
-    // public Result<User> findById(UUID userId){
-    //     // Optional<User> userRe
-    // }
+    public Result<UserResponse> findById(UUID userId){
+        //find user in db
+        Optional<User> existingUser=userRepository.findById(userId);
+        if(existingUser.get()==null){
+            return Result.Failure(Error.NOT_FOUND("User not found"));
+        }
+        // user domain
+        User userDomain=existingUser.get();
+        // DTO
+        UserResponse userResultResponse=UserResponse.UserMapper(userDomain);
+
+        return Result.Success(userResultResponse);
+    }
 
     // public Result<boolean> deleById(){
 

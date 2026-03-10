@@ -49,7 +49,7 @@ public class Product extends Aggregate{
             return Result.Failure(stockResult.getError());
         }
         this.stock=stockResult.getValue();
-        return Result.Success(stock);
+        return Result.Success(this.stock);
 
     }   
 
@@ -59,7 +59,7 @@ public class Product extends Aggregate{
             return Result.Failure(newName.getError());
         }
         this.name=newName.getValue();
-        return Result.Success(name);
+        return Result.Success(this.name);
     }
     
 

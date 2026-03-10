@@ -19,8 +19,24 @@ public class ProductPersistenceAdapter implements ProductRepository {
     }
     @Override
     public Product save(Product product) {
+    //      ProductEntity entity;
+         
+    //      if(product.getId() != null){
+    //     entity = jpaProductRepository.findById(product.getId())
+    //             .orElseThrow(() -> new RuntimeException("Product not found"));
+
+    //     entity.setName(product.getName().getValue());
+    //     entity.setPrice(product.getPrice());
+    //     entity.setStock(product.getStock().getValue());
+    //     entity.setDescription(product.getDescription());
+
+    // }else{
+    //     entity = ProductMapper.toProductEntity(product);
+    // }
+   
         ProductEntity productEntity=ProductMapper.toProductEntity(product);
         ProductEntity savedEntity=jpaProductRepository.save(productEntity);
+
         return Product.reconstruct(
         savedEntity.getId(),
         Name.create(savedEntity.getName()).getValue(),

@@ -1,0 +1,43 @@
+services:
+  spring-api:
+    image: my-spring-app
+    depends_on:
+      postgree-db:
+        condition: service_healthy
+
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8080:8080
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgree-db:5432/ProductDatabase
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+    
+  postgree-db:
+    image: postgres:18-alpine
+    restart: always
+    networks:
+      - backend
+    environment:
+    - POSTGRES_USER=${DB_USERNAME}
+    - POSTGRES_PASSWORD=${DB_PASSWORD}
+    - POSTGRES_DB=ProductDatabase
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  db-data:

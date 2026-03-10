@@ -94,13 +94,13 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable("id") UUID productId,@RequestBody UpdateProductRequest productRequest) {
+    public ResponseEntity<?> updateProduct(@PathVariable("id") UUID productId,@RequestBody(required = false) UpdateProductRequest productRequest) {
             Result<ProductResponse> productUpdateResult=productService.updateProduct(productId, productRequest);
             if(productUpdateResult.isFailure()){
                 Error error=productUpdateResult.getError();
                  throw new DomainExceptions(error);
             }
-            return ResponseEntity.status(204).body(productUpdateResult);
+            return ResponseEntity.status(200).body(productUpdateResult.getValue());
     }
     
 

@@ -6,7 +6,7 @@ on:
       java:
         type: string
         required: true
-        default: "21"
+        default: "25"
       os:
         type: string
         required: true
@@ -31,7 +31,7 @@ jobs:
                 cache: maven
 
         -   name: Run tests
-            run: mvn clean verify
+            run: mvn clean install
 
         -   name: Upload Test Report
             uses: actions/upload-artifact@v4
@@ -39,4 +39,5 @@ jobs:
             with:
                 name: junit-reports ${{inputs.os}} ${{inputs.java}}
                 path: target/surefire-reports/
-        
+      
+
