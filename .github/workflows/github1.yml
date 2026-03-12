@@ -38,7 +38,7 @@ jobs:
 
     test:
         needs: changes
-        if: ${{needs.changes.outputs.backend==true}}
+        if: ${{needs.changes.outputs.backend=='true'}}
         strategy:
             matrix:
                 os: [ubuntu-latest]
@@ -50,7 +50,7 @@ jobs:
 
     security-test:
         needs: changes
-        if: ${{needs.changes.outputs.backend==true}}
+        if: ${{needs.changes.outputs.backend=='true'}}
         runs-on: ubuntu-latest
         steps:
             -   name: checkout code repo
