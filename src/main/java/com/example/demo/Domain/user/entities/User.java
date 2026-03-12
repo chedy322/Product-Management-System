@@ -32,7 +32,7 @@ public class User extends Aggregate{
     }
 
     public static Result<User> create(String email, String password,String username){
-        LocalDateTime currenDateTime=LocalDateTime.now();
+                LocalDateTime currenDateTime=LocalDateTime.now();
                 User user= new User(UUID.randomUUID(),email,password,UserRole.USER,false,currenDateTime,currenDateTime,username);
                 // register user created event
                 user.registerEvent(new UserCreated(user.getId(),user.getCreatedAt(),user.getEmail(),user.getUsername()));
@@ -45,14 +45,13 @@ public class User extends Aggregate{
                 return Result.Success(user);
     }
 
-    public Result<Void> changeEmail(String newEmail) {
+    public Result<Boolean> changeEmail(String newEmail) {
         if (newEmail == null || !newEmail.contains("@")) {
-            // throw new IllegalArgumentException("Invalid email format");
             return Result.Failure(Error.VALIDATION_ERROR("Invalid email format"));
         }
         this.email = newEmail;
         this.updatedAt = LocalDateTime.now();
-        return Result.Success(null);
+        return Result.Success(true);
     }
 // change username
     public void changeUsername(String username){
@@ -60,7 +59,7 @@ public class User extends Aggregate{
         this.updatedAt=LocalDateTime.now();
     }
 // change password
-// change this in future to value object
+// change this in future to value object with validation 
     public void changePassword(String password){
         this.password=password;
         this.updatedAt=LocalDateTime.now();
@@ -85,7 +84,7 @@ public class User extends Aggregate{
 
     // --- GETTERS ---
 
-    public UUID getId() { return super.getId(); }
+    // public UUID getId() { return super.getId(); }
     public String getEmail() { return email; }
     public String getPassword() { return password; }
     public UserRole getRole() { return role; }

@@ -9,13 +9,36 @@ on:
 env:
     JAVA_VERSION: 25
 
+
     # added concurrency so when we start new workflow we stop the previous one
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
+    changes:
+        runs-on: ubuntu-latest
+        outputs:
+            backend: ${{steps.filter.outputs.backend}}
+            docker: ${{steps.filter.outputs.docker}}
+        steps:
+            -   name: Checkout the code
+                uses: actions/checkout@v4
+            -   name: Track changes in files
+                uses: dorny/paths-filter@v3
+                id: filter
+                with: 
+                    filters: |
+                        backend: 
+                            -   'src/**'
+                            -   'pom.xml'
+                        docker:
+                            -   'Dockerfile'
+                            -   '.dockerignore'
+
     test:
+        needs: changes
+        if: ${{needs.changes.outputs.backend==true}}
         strategy:
             matrix:
                 os: [ubuntu-latest]
@@ -25,13 +48,46 @@ jobs:
             os: ${{matrix.os}}
             java: "25"
 
+    security-test:
+        needs: changes
+        if: ${{needs.changes.outputs.backend==true}}
+        runs-on: ubuntu-latest
+        steps:
+            -   name: checkout code repo
+                uses: actions/checkout@v4
+            -   name: setup Java SDK
+                uses: actions/setup-java@v4
+                with: 
+                    java-version: ${{env.JAVA_VERSION}}
+                    distribution: 'temurin'
+                    cache: maven
+            -   name: Install maven depnedicies for the project
+                run: mvn dependency:go-offline
+            -   name: run snyk for vulnerabilties
+                uses: snyk/actions/maven@master
+                continue-on-error: true
+                env:
+                    SNYK_TOKEN: ${{secrets.SNYK}}
+                with:
+                    args:  --sarif-file-output=snyk.sarif --severity-threshold=high
+            -   name: upload snyk artifact result
+                uses: github/codeql-action/upload-sarif@v3
+                if: always()
+                with:
+                    sarif_file: snyk.sarif
+
+
+            
 
 # build docker image
     Build-deploy-image:
-        needs: test
+        needs: [test,changes,security-test]
         runs-on: "ubuntu-latest"
         if: github.event_name!='pull_request' && success()
-        environment: Docker
+        outputs:
+            image-tag: ${{steps.meta.outputs.tags}}
+
+        environment:  Docker
         steps:
             -   name: Checkout code repository
                 uses: actions/checkout@v4
@@ -46,13 +102,20 @@ jobs:
                 id: meta
                 uses: docker/metadata-action@v5
                 with:
-                    images: ${{secrets.DOCKER_USERNAME}}/my-springboot-app
+                    images:  ${{secrets.DOCKER_USERNAME}}/my-springboot-app
             -   name: build and push to docker hub registry
                 uses: docker/build-push-action@v5
                 with:
                     context: .
                     tags: ${{ steps.meta.outputs.tags }}
                     labels: ${{ steps.meta.outputs.labels }}
+                    push: true
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max
+
+# add notification to slack or whatsapp
+
+          
                 
             
             

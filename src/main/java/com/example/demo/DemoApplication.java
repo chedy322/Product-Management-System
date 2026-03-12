@@ -9,10 +9,11 @@ public class DemoApplication {
 
 	public static void main(String[] args) {
 		// Load .env file
-        // Dotenv dotenv = Dotenv.configure()
-        //     .ignoreIfMalformed()
-        //     .load();
-        // dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
+        Dotenv dotenv = Dotenv.configure()
+        .directory("./shop")
+            .ignoreIfMalformed()
+            .load();
+        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
 		SpringApplication.run(DemoApplication.class, args);
 	}
 

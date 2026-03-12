@@ -1,111 +1,88 @@
-2026-03-08 21:14:30 [main] INFO  : Starting DemoApplicationTests using Java 25.0.2 with PID 6680 (started by chedi in C:\Users\chedi\Desktop\allFolders\myProjects\productProject\Shop)
-2026-03-08 21:14:30 [main] INFO  : No active profile set, falling back to 1 default profile: "default"
-2026-03-08 21:14:30 [background-preinit] INFO  : HV000001: Hibernate Validator 9.0.1.Final
-2026-03-08 21:14:31 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 21:14:31 [main] INFO  : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
-2026-03-08 21:14:31 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.product.JpaProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 21:14:31 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.user.JpaUserRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 21:14:31 [main] INFO  : Finished Spring Data repository scanning in 66 ms. Found 0 JDBC repository interfaces.
-2026-03-08 21:14:31 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 21:14:31 [main] INFO  : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-08 21:14:31 [main] INFO  : Finished Spring Data repository scanning in 61 ms. Found 2 JPA repository interfaces.
-2026-03-08 21:14:32 [main] INFO  : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-03-08 21:14:32 [main] INFO  : HHH000001: Hibernate ORM core version 7.2.1.Final
-2026-03-08 21:14:33 [main] INFO  : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-08 21:14:33 [main] INFO  : HikariPool-1 - Starting...
-2026-03-08 21:14:33 [main] INFO  : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6033f36c
-2026-03-08 21:14:33 [main] INFO  : HikariPool-1 - Start completed.
-2026-03-08 21:14:33 [main] INFO  : HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/ProductDatabase]
+2026-03-10 17:04:06 [main] INFO  : Starting DemoApplicationTests using Java 25.0.2 with PID 34516 (started by chedi in C:\Users\chedi\Desktop\allFolders\myProjects\productProject\Shop)
+2026-03-10 17:04:06 [main] INFO  : No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:04:07 [background-preinit] INFO  : HV000001: Hibernate Validator 9.0.1.Final
+2026-03-10 17:04:07 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-10 17:04:07 [main] INFO  : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2026-03-10 17:04:07 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.product.JpaProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2026-03-10 17:04:07 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.user.JpaUserRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2026-03-10 17:04:07 [main] INFO  : Finished Spring Data repository scanning in 62 ms. Found 0 JDBC repository interfaces.
+2026-03-10 17:04:07 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-10 17:04:07 [main] INFO  : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-10 17:04:08 [main] INFO  : Finished Spring Data repository scanning in 56 ms. Found 2 JPA repository interfaces.
+2026-03-10 17:04:08 [main] INFO  : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-03-10 17:04:08 [main] INFO  : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-03-10 17:04:09 [main] INFO  : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-10 17:04:09 [main] INFO  : HikariPool-1 - Starting...
+2026-03-10 17:04:09 [main] INFO  : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@4ed492df
+2026-03-10 17:04:09 [main] INFO  : HikariPool-1 - Start completed.
+2026-03-10 17:04:09 [main] INFO  : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:57909/test?loggerLevel=OFF]
 	Database driver: PostgreSQL JDBC Driver
 	Database dialect: PostgreSQLDialect
-	Database version: 17.8
-	Default catalog/schema: ProductDatabase/public
+	Database version: 17.9
+	Default catalog/schema: test/public
 	Autocommit mode: undefined/unknown
 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
 	JDBC fetch size: none
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-03-08 21:14:34 [main] INFO  : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-03-08 21:14:34 [main] INFO  : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 21:14:34 [main] INFO  : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-08 21:14:36 [main] INFO  : Exposing 1 endpoint beneath base path '/actuator'
-2026-03-08 21:14:36 [main] INFO  : Started DemoApplicationTests in 6.72 seconds (process running for 8.559)
-2026-03-08 21:14:36 [SpringApplicationShutdownHook] INFO  : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 21:14:36 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown initiated...
-2026-03-08 21:14:36 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown completed.
-2026-03-08 21:49:47 [main] INFO  : Starting DemoApplicationTests using Java 25.0.2 with PID 24492 (started by chedi in C:\Users\chedi\Desktop\allFolders\myProjects\productProject\Shop)
-2026-03-08 21:49:47 [main] INFO  : No active profile set, falling back to 1 default profile: "default"
-2026-03-08 21:49:48 [background-preinit] INFO  : HV000001: Hibernate Validator 9.0.1.Final
-2026-03-08 21:49:48 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 21:49:48 [main] INFO  : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
-2026-03-08 21:49:48 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.product.JpaProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 21:49:48 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.user.JpaUserRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 21:49:48 [main] INFO  : Finished Spring Data repository scanning in 34 ms. Found 0 JDBC repository interfaces.
-2026-03-08 21:49:48 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 21:49:48 [main] INFO  : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-08 21:49:48 [main] INFO  : Finished Spring Data repository scanning in 32 ms. Found 2 JPA repository interfaces.
-2026-03-08 21:49:49 [main] INFO  : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-03-08 21:49:49 [main] INFO  : HHH000001: Hibernate ORM core version 7.2.1.Final
-2026-03-08 21:49:49 [main] INFO  : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-08 21:49:49 [main] INFO  : HikariPool-1 - Starting...
-2026-03-08 21:49:49 [main] INFO  : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@646bf8a6
-2026-03-08 21:49:49 [main] INFO  : HikariPool-1 - Start completed.
-2026-03-08 21:49:49 [main] INFO  : HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/ProductDatabase]
+2026-03-10 17:04:10 [main] INFO  : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-10 17:04:11 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:04:11 [main] WARN  : constraint "uko61fmio5yukmmiqgnxf8pnavn" of relation "products" does not exist, skipping
+2026-03-10 17:04:11 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:04:11 [main] WARN  : constraint "uk6dotkott2kjsp8vw4d0m25fb7" of relation "users" does not exist, skipping
+2026-03-10 17:04:11 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:04:11 [main] WARN  : constraint "ukr43af9ap4edm43mmtq01oddj6" of relation "users" does not exist, skipping
+2026-03-10 17:04:11 [main] INFO  : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 17:04:11 [main] INFO  : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-10 17:04:12 [main] INFO  : Exposing 1 endpoint beneath base path '/actuator'
+2026-03-10 17:04:12 [main] INFO  : Started DemoApplicationTests in 6.22 seconds (process running for 50.319)
+2026-03-10 17:04:12 [main] WARN  : Type implements CloseableResource but not AutoCloseable: org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter
+2026-03-10 17:04:13 [SpringApplicationShutdownHook] INFO  : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 17:04:13 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown initiated...
+2026-03-10 17:04:13 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown completed.
+2026-03-10 17:06:43 [main] INFO  : Starting DemoApplicationTests using Java 25.0.2 with PID 34548 (started by chedi in C:\Users\chedi\Desktop\allFolders\myProjects\productProject\Shop)
+2026-03-10 17:06:43 [main] INFO  : No active profile set, falling back to 1 default profile: "default"
+2026-03-10 17:06:43 [background-preinit] INFO  : HV000001: Hibernate Validator 9.0.1.Final
+2026-03-10 17:06:44 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-10 17:06:44 [main] INFO  : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
+2026-03-10 17:06:45 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.product.JpaProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2026-03-10 17:06:45 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.user.JpaUserRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
+2026-03-10 17:06:45 [main] INFO  : Finished Spring Data repository scanning in 81 ms. Found 0 JDBC repository interfaces.
+2026-03-10 17:06:45 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-10 17:06:45 [main] INFO  : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-10 17:06:45 [main] INFO  : Finished Spring Data repository scanning in 73 ms. Found 2 JPA repository interfaces.
+2026-03-10 17:06:45 [main] INFO  : HHH008540: Processing PersistenceUnitInfo [name: default]
+2026-03-10 17:06:46 [main] INFO  : HHH000001: Hibernate ORM core version 7.2.1.Final
+2026-03-10 17:06:46 [main] INFO  : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-10 17:06:46 [main] INFO  : HikariPool-1 - Starting...
+2026-03-10 17:06:46 [main] INFO  : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@6e68ccc9
+2026-03-10 17:06:46 [main] INFO  : HikariPool-1 - Start completed.
+2026-03-10 17:06:46 [main] INFO  : HHH10001005: Database info:
+	Database JDBC URL [jdbc:postgresql://localhost:59041/test?loggerLevel=OFF]
 	Database driver: PostgreSQL JDBC Driver
 	Database dialect: PostgreSQLDialect
-	Database version: 17.8
-	Default catalog/schema: ProductDatabase/public
+	Database version: 17.9
+	Default catalog/schema: test/public
 	Autocommit mode: undefined/unknown
 	Isolation level: READ_COMMITTED [default READ_COMMITTED]
 	JDBC fetch size: none
 	Pool: DataSourceConnectionProvider
 	Minimum pool size: undefined/unknown
 	Maximum pool size: undefined/unknown
-2026-03-08 21:49:50 [main] INFO  : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-03-08 21:49:50 [main] INFO  : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 21:49:50 [main] INFO  : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-08 21:49:51 [main] INFO  : Exposing 1 endpoint beneath base path '/actuator'
-2026-03-08 21:49:51 [main] INFO  : Started DemoApplicationTests in 3.986 seconds (process running for 4.927)
-2026-03-08 21:49:51 [SpringApplicationShutdownHook] INFO  : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 21:49:51 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown initiated...
-2026-03-08 21:49:51 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown completed.
-2026-03-08 22:20:37 [main] INFO  : Starting DemoApplicationTests using Java 25.0.2 with PID 19620 (started by chedi in C:\Users\chedi\Desktop\allFolders\myProjects\productProject\Shop)
-2026-03-08 22:20:37 [main] INFO  : No active profile set, falling back to 1 default profile: "default"
-2026-03-08 22:20:38 [background-preinit] INFO  : HV000001: Hibernate Validator 9.0.1.Final
-2026-03-08 22:20:38 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 22:20:38 [main] INFO  : Bootstrapping Spring Data JDBC repositories in DEFAULT mode.
-2026-03-08 22:20:38 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.product.JpaProductRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 22:20:38 [main] INFO  : Spring Data JDBC - Could not safely identify store assignment for repository candidate interface com.example.demo.Infrastructure.persistence.user.JpaUserRepository; If you want this repository to be a JDBC repository, consider annotating your entities with one of these annotations: org.springframework.data.relational.core.mapping.Table.
-2026-03-08 22:20:38 [main] INFO  : Finished Spring Data repository scanning in 36 ms. Found 0 JDBC repository interfaces.
-2026-03-08 22:20:38 [main] INFO  : Multiple Spring Data modules found, entering strict repository configuration mode
-2026-03-08 22:20:38 [main] INFO  : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
-2026-03-08 22:20:38 [main] INFO  : Finished Spring Data repository scanning in 33 ms. Found 2 JPA repository interfaces.
-2026-03-08 22:20:39 [main] INFO  : HHH008540: Processing PersistenceUnitInfo [name: default]
-2026-03-08 22:20:39 [main] INFO  : HHH000001: Hibernate ORM core version 7.2.1.Final
-2026-03-08 22:20:39 [main] INFO  : No LoadTimeWeaver setup: ignoring JPA class transformer
-2026-03-08 22:20:39 [main] INFO  : HikariPool-1 - Starting...
-2026-03-08 22:20:39 [main] INFO  : HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@646bf8a6
-2026-03-08 22:20:39 [main] INFO  : HikariPool-1 - Start completed.
-2026-03-08 22:20:39 [main] INFO  : HHH10001005: Database info:
-	Database JDBC URL [jdbc:postgresql://localhost:5432/ProductDatabase]
-	Database driver: PostgreSQL JDBC Driver
-	Database dialect: PostgreSQLDialect
-	Database version: 17.8
-	Default catalog/schema: ProductDatabase/public
-	Autocommit mode: undefined/unknown
-	Isolation level: READ_COMMITTED [default READ_COMMITTED]
-	JDBC fetch size: none
-	Pool: DataSourceConnectionProvider
-	Minimum pool size: undefined/unknown
-	Maximum pool size: undefined/unknown
-2026-03-08 22:20:40 [main] INFO  : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
-2026-03-08 22:20:40 [main] INFO  : Initialized JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 22:20:40 [main] INFO  : Hibernate is in classpath; If applicable, HQL parser will be used.
-2026-03-08 22:20:41 [main] INFO  : Exposing 1 endpoint beneath base path '/actuator'
-2026-03-08 22:20:41 [main] INFO  : Started DemoApplicationTests in 4.049 seconds (process running for 4.985)
-2026-03-08 22:20:42 [SpringApplicationShutdownHook] INFO  : Closing JPA EntityManagerFactory for persistence unit 'default'
-2026-03-08 22:20:42 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown initiated...
-2026-03-08 22:20:42 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown completed.
+2026-03-10 17:06:48 [main] INFO  : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-10 17:06:48 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:06:48 [main] WARN  : constraint "uko61fmio5yukmmiqgnxf8pnavn" of relation "products" does not exist, skipping
+2026-03-10 17:06:48 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:06:48 [main] WARN  : constraint "uk6dotkott2kjsp8vw4d0m25fb7" of relation "users" does not exist, skipping
+2026-03-10 17:06:48 [main] WARN  : HHH000247: ErrorCode: 0, SQLState: 00000
+2026-03-10 17:06:48 [main] WARN  : constraint "ukr43af9ap4edm43mmtq01oddj6" of relation "users" does not exist, skipping
+2026-03-10 17:06:48 [main] INFO  : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 17:06:48 [main] INFO  : Hibernate is in classpath; If applicable, HQL parser will be used.
+2026-03-10 17:06:49 [main] INFO  : Exposing 1 endpoint beneath base path '/actuator'
+2026-03-10 17:06:49 [main] INFO  : Started DemoApplicationTests in 6.979 seconds (process running for 14.93)
+2026-03-10 17:06:50 [main] WARN  : Type implements CloseableResource but not AutoCloseable: org.testcontainers.junit.jupiter.TestcontainersExtension$StoreAdapter
+2026-03-10 17:06:50 [SpringApplicationShutdownHook] INFO  : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-10 17:06:50 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown initiated...
+2026-03-10 17:06:50 [SpringApplicationShutdownHook] INFO  : HikariPool-1 - Shutdown completed.

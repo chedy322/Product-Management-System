@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Application.user.dto.UserResponse;
+import com.example.demo.Application.user.dto.UpdateUserRequest;
 import com.example.demo.Application.user.dto.UserRequest;
 import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Domain.user.interfaces.UserRepository;
@@ -26,10 +27,11 @@ public class UserService {
     private CheckUserEmailUniqueness checkUserEmailUniqueness;
     private CheckUsernameUniqueness checkUsernameUniqueness;
     private DomainEventPublisher domainEventPublisher;
-    public UserService(UserRepository userRepository,CheckUserEmailUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness){
+    public UserService(UserRepository userRepository,CheckUserEmailUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness, DomainEventPublisher domainEventPublisher){
         this.userRepository=userRepository;
         this.checkUserEmailUniqueness=checkUserEmailUniqueness;
         this.checkUsernameUniqueness=checkUsernameUniqueness;
+        this.domainEventPublisher=domainEventPublisher;
     }
 
 
@@ -39,9 +41,12 @@ public class UserService {
         Result<Boolean> emailIsUniqueResult=checkUserEmailUniqueness.CheckEmailUniqueness(userRequest.email());
         if(emailIsUniqueResult.isFailure()){
             return Result.Failure(emailIsUniqueResult.getError());
-
         }
         // check user name is unique TODO 
+        Result<Boolean> usernameIsUniqueResult=checkUsernameUniqueness.CheckUsername(userRequest.username());
+        if(usernameIsUniqueResult.isFailure()){
+            return Result.Failure(usernameIsUniqueResult.getError());
+        }
         Result<User> userResult=User.create(userRequest.email(), userRequest.password(),userRequest.username());
         if(userResult.isFailure()){
             return Result.Failure(userResult.getError());
@@ -66,7 +71,7 @@ public class UserService {
     public Result<UserResponse> findById(UUID userId){
         //find user in db
         Optional<User> existingUser=userRepository.findById(userId);
-        if(existingUser.get()==null){
+        if(existingUser.isEmpty()){
             return Result.Failure(Error.NOT_FOUND("User not found"));
         }
         // user domain
@@ -77,10 +82,43 @@ public class UserService {
         return Result.Success(userResultResponse);
     }
 
-    // public Result<boolean> deleById(){
+    public Result<Boolean> deleteById(UUID userId){
+        // 1. check user exists in db
+        Optional<User> existingUser=userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            return Result.Failure(Error.NOT_FOUND("User not found"));
+        }
+        // 2. delete user from db
+        userRepository.deleteById(userId);
+        return Result.Success(true);
+    }
 
-    // }
-    // public Result<UserResponse> updateUser(){
+    @Transactional
+    public Result<UserResponse> updateUser(UUID userId,UpdateUserRequest userRequest){
+        // 1. check if user exists in db
+          Optional<User> existingUser=userRepository.findById(userId);
+        if(existingUser.isEmpty()){
+            return Result.Failure(Error.NOT_FOUND("User not found"));
+        }
+        // 2. get User entity
+        User user=existingUser.get();
+        // 3. update based on fields existing
+        if(userRequest.email()!=null){
+            user.changeEmail(userRequest.email());
+        }
+        if(userRequest.password()!=null){
+            user.changePassword(userRequest.password());
+        }
+        if(userRequest.username()!=null){
+            user.changeUsername(userRequest.username());
+        }
+        
+        // 4. save changes to db
+        userRepository.save(user);
+        // 5. change return to UserResposne
+        UserResponse userResponse=UserResponse.UserMapper(user);
+        return Result.Success(userResponse);
 
-    // }
+
+    }
 }
