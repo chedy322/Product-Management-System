@@ -24,7 +24,7 @@ import com.example.demo.Domain.shared.Error;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UserController {
  private UserService userService;
     public UserController(UserService userService){
@@ -32,7 +32,7 @@ public class UserController {
     }
 
     @GetMapping("")
-    public ResponseEntity<?> getProducts() {
+    public ResponseEntity<?> getUsers() {
         // Implementation for creating a user
         Result<List<UserResponse>> usersResult= userService.findAll();
         if(usersResult.isFailure()){

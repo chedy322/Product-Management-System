@@ -34,7 +34,7 @@ import com.example.demo.Domain.shared.Error;
 
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductController {
     private ProductService productService;
     public ProductController(ProductService productService){

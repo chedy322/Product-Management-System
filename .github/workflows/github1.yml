@@ -10,7 +10,7 @@ env:
     JAVA_VERSION: 25
 
 
-    # added concurrency so when we start new workflow we stop the previous one
+# added concurrency so when we start new workflow we stop the previous one
 concurrency:
     group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
@@ -47,7 +47,7 @@ jobs:
         with:
             os: ${{matrix.os}}
             java: "25"
-
+        
     security-test:
         needs: changes
         if: ${{needs.changes.outputs.backend=='true'}}
@@ -61,7 +61,7 @@ jobs:
                     java-version: ${{env.JAVA_VERSION}}
                     distribution: 'temurin'
                     cache: maven
-            -   name: Install maven depnedicies for the project
+            -   name: Install maven dependencies for the project
                 run: mvn dependency:go-offline
             -   name: run snyk for vulnerabilties
                 uses: snyk/actions/maven@master
@@ -75,7 +75,23 @@ jobs:
                 if: always()
                 with:
                     sarif_file: snyk.sarif
-
+    GitGuardian-scanning:
+        name: GitGuardian scan
+        environment: GitGuardian
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+                with:
+                    fetch-depth: 0 # fetch all history so multiple commits can be scanned
+            -   name: GitGuardian scan
+                uses: GitGuardian/ggshield/actions/secret@v1.48.0
+                env:
+                    GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+                    GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+                    GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+                    GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+                    GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
 
             
 
@@ -120,9 +136,3 @@ jobs:
             
             
 
-
-
-
-
-
-    
