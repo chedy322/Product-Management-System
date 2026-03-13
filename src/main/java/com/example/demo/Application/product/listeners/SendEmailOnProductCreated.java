@@ -14,6 +14,6 @@ public class SendEmailOnProductCreated {
     @Async
     @EventListener
     public void handle(ProductCreated event){
-        System.out.println(event.productName()+"Is created succesfully.Sending Email.");
+        System.out.println(event.productName()+"Is created succesfully.Sending Email...");
     }
 }
