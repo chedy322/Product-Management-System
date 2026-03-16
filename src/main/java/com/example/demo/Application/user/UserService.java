@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.example.demo.Application.user.dto.UserResponse;
@@ -24,44 +25,13 @@ import com.example.demo.Domain.shared.Result;
 @Service
 public class UserService {
     private UserRepository userRepository;
-    private CheckUserEmailUniqueness checkUserEmailUniqueness;
-    private CheckUsernameUniqueness checkUsernameUniqueness;
-    private DomainEventPublisher domainEventPublisher;
-    public UserService(UserRepository userRepository,CheckUserEmailUniqueness checkUserEmailUniqueness,CheckUsernameUniqueness checkUsernameUniqueness, DomainEventPublisher domainEventPublisher){
+    
+    public UserService(UserRepository userRepository){
         this.userRepository=userRepository;
-        this.checkUserEmailUniqueness=checkUserEmailUniqueness;
-        this.checkUsernameUniqueness=checkUsernameUniqueness;
-        this.domainEventPublisher=domainEventPublisher;
+        
     }
 
 
-    @Transactional
-    public Result<UserResponse> create(UserRequest userRequest){
-        // check user email uniqueness
-        Result<Boolean> emailIsUniqueResult=checkUserEmailUniqueness.CheckEmailUniqueness(userRequest.email());
-        if(emailIsUniqueResult.isFailure()){
-            return Result.Failure(emailIsUniqueResult.getError());
-        }
-        // check user name is unique TODO 
-        Result<Boolean> usernameIsUniqueResult=checkUsernameUniqueness.CheckUsername(userRequest.username());
-        if(usernameIsUniqueResult.isFailure()){
-            return Result.Failure(usernameIsUniqueResult.getError());
-        }
-        Result<User> userResult=User.create(userRequest.email(), userRequest.password(),userRequest.username());
-        if(userResult.isFailure()){
-            return Result.Failure(userResult.getError());
-        }
-        // get the user value from the result
-        User user=userResult.getValue();
-        // save to db
-        User savedUser=userRepository.save(user);
-        // dispathc the user created event
-        domainEventPublisher.dispatch(savedUser);
-        // map the user data to userResponse data format
-        UserResponse userReturnedData=UserResponse.UserMapper(savedUser);
-        return Result.Success(userReturnedData);
-
-    }
 
 
     public Result<List<UserResponse>> findAll(){

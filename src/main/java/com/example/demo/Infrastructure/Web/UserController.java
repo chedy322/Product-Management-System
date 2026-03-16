@@ -60,15 +60,7 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("")
-    public ResponseEntity<?> createProduct(@Valid @RequestBody UserRequest entity) {
-        Result<UserResponse> createdUser = userService.create(entity);
-        if(createdUser.isFailure()){
-            Error error=createdUser.getError();
-            throw new DomainExceptions(error);
-        }
-        return ResponseEntity.status(201).body(createdUser.getValue());
-    }
+   
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable("id") UUID userId) {

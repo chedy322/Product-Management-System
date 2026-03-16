@@ -17,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+
+// UserDetailsService interface and userDetailsSericeImpl handles loading user from db and matching it 
+// to userdeatils.user 
 public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
