@@ -81,15 +81,15 @@ jobs:
                     java-version: ${{env.JAVA_VERSION}}
                     distribution: 'temurin'
                     cache: maven
-            -   name: Install maven dependencies for the project
-                run: mvn dependency:go-offline
+            -   name: Compile and package project 
+                run: mvn -B package -DskipTests
                 
             -   name: Install Snyk CLI
                 uses: snyk/actions/setup@master
                     
             -   name: Suthenticate to snyk
                 run: snyk auth ${{ secrets.SNYK_TOKEN }}
-                
+
             -   name: run snyk for vulnerabilties
                 run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
                 
