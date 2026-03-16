@@ -90,9 +90,9 @@ jobs:
             -   name: run snyk for vulnerabilties
                 run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
                 env:
-                    SNYK_TOKEN: ${{ secrets.SNYK }}
+                    SNYK_TOKEN: ${{secrets.SNYK_TOKEN}}
             -   name: upload snyk artifact result
-                uses: github/codeql-action/upload-sarif@v3
+                uses: github/codeql-action/upload-sarif@v4
                 if: always()
                 with:
                     sarif_file: snyk.sarif
