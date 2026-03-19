@@ -8,6 +8,7 @@ import com.example.demo.Application.auth.dto.UserLoginRequest;
 import com.example.demo.Application.user.dto.UserRequest;
 import com.example.demo.Application.user.dto.UserResponse;
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
+import com.example.demo.Domain.Interfaces.JwtFilter;
 import com.example.demo.Domain.Interfaces.PasswordEncoder;
 import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
@@ -23,12 +24,13 @@ import jakarta.transaction.Transactional;
 public class LoginUseCase {
    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-
+    private final JwtFilter jwtFilter;
 
      public LoginUseCase(UserRepository userRepository,
-    PasswordEncoder passwordEncoder){
+    PasswordEncoder passwordEncoder,JwtFilter jwtFilter){
         this.userRepository=userRepository;
         this.passwordEncoder=passwordEncoder;
+        this.jwtFilter=jwtFilter;
 
     }
 
@@ -47,6 +49,8 @@ public class LoginUseCase {
         if(!passwordMatches){
             return Result.Failure(Error.VALIDATION_ERROR("Wrong email or password"));
         }
+
+
         // 4.Map user to userResponse
         UserResponse userResponse=UserResponse.UserMapper(existingUser);
         // 5.if passwrod is correct return user for now

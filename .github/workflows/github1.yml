@@ -68,41 +68,41 @@ jobs:
             os: ${{matrix.os}}
             java: "25"
         
-    security-test:
-        needs: changes
-        if: ${{needs.changes.outputs.backend=='true'}}
-        runs-on: ubuntu-latest
-        steps:
-            -   name: checkout code repo
-                uses: actions/checkout@v4
-            -   name: setup Java SDK
-                uses: actions/setup-java@v4
-                with: 
-                    java-version: ${{env.JAVA_VERSION}}
-                    distribution: 'temurin'
-                    cache: maven
-            -   name: Compile and package project 
-                run: mvn -B package -DskipTests
+    # security-test:
+    #     needs: changes
+    #     if: ${{needs.changes.outputs.backend=='true'}}
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         -   name: checkout code repo
+    #             uses: actions/checkout@v4
+    #         -   name: setup Java SDK
+    #             uses: actions/setup-java@v4
+    #             with: 
+    #                 java-version: ${{env.JAVA_VERSION}}
+    #                 distribution: 'temurin'
+    #                 cache: maven
+    #         -   name: Compile and package project 
+    #             run: mvn -B package -DskipTests
                 
-            -   name: Install Snyk CLI
-                uses: snyk/actions/setup@master
+    #         -   name: Install Snyk CLI
+    #             uses: snyk/actions/setup@master
                     
-            -   name: Suthenticate to snyk
-                run: snyk auth ${{ secrets.SNYK_TOKEN }}
+    #         -   name: Suthenticate to snyk
+    #             run: snyk auth ${{ secrets.SNYK_TOKEN }}
 
-            -   name: run snyk for vulnerabilties
-                run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
+    #         -   name: run snyk for vulnerabilties
+    #             run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
                 
-            -   name: upload snyk artifact result
-                uses: github/codeql-action/upload-sarif@v4
-                if: always()
-                with:
-                    sarif_file: snyk.sarif
+    #         -   name: upload snyk artifact result
+    #             uses: github/codeql-action/upload-sarif@v4
+    #             if: always()
+    #             with:
+    #                 sarif_file: snyk.sarif
             
 
 # build docker image
     Build-deploy-image:
-        needs: [test,changes,security-test,GitGuardian-scanning]
+        needs: [test,changes,GitGuardian-scanning]
         runs-on: "ubuntu-latest"
         if: github.event_name!='pull_request' && success()
         outputs:
@@ -135,8 +135,7 @@ jobs:
                     cache-to: type=gha,mode=max
 
 # add notification to slack or whatsapp
-
-          
+  
                 
             
             

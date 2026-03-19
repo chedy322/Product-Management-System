@@ -32,7 +32,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user=userResult.get();
 
         return org.springframework.security.core.userdetails.User.builder()
-        .username(user.getUsername())
+        .username(user.getEmail())
         .password(user.getPassword())
         .authorities(
           List.of( new  SimpleGrantedAuthority (user.getRole().getAuthority()))

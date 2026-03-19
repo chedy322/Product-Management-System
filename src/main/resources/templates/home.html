@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Prodify — Product Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+    :root {
+      --bg:        #0b0c10;
+      --surface:   #13151c;
+      --card:      #1a1d27;
+      --border:    #252836;
+      --accent:    #f0a500;
+      --accent2:   #ff6b35;
+      --text:      #e8eaf0;
+      --muted:     #7a7f96;
+      --success:   #3ddc97;
+      --radius:    14px;
+    }
+ 
+    html { scroll-behavior: smooth; }
+ 
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 400;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+ 
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+ 
+    /* ── GLOW BLOBS ── */
+    .blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+      animation: drift 18s ease-in-out infinite alternate;
+    }
+    .blob-1 { width: 520px; height: 520px; background: var(--accent); top: -180px; left: -160px; animation-delay: 0s; }
+    .blob-2 { width: 400px; height: 400px; background: var(--accent2); bottom: 80px; right: -120px; animation-delay: -6s; }
+    .blob-3 { width: 300px; height: 300px; background: #5b8dee; top: 50%; left: 50%; transform: translate(-50%,-50%); animation-delay: -3s; }
+ 
+    @keyframes drift {
+      from { transform: translate(0,0) scale(1); }
+      to   { transform: translate(30px, 40px) scale(1.08); }
+    }
+ 
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 68px;
+      background: rgba(11,12,16,0.7);
+      backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+    }
+ 
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.45rem;
+      letter-spacing: -0.5px;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .logo span { color: var(--accent); }
+ 
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--text); }
+ 
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+ 
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 9px 22px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .22s;
+      border: none;
+      font-family: inherit;
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+ 
+    .btn-primary {
+      background: var(--accent);
+      color: #0b0c10;
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: #fbb92b; transform: translateY(-1px); box-shadow: 0 6px 28px rgba(240,165,0,0.32); }
+ 
+    .btn-lg { padding: 14px 32px; font-size: 0.97rem; border-radius: 10px; }
+ 
+    .btn-outline {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+      font-weight: 500;
+    }
+    .btn-outline:hover { border-color: var(--muted); background: rgba(255,255,255,0.04); }
+ 
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 120px 5% 100px;
+      gap: 28px;
+    }
+ 
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 100px;
+      background: rgba(240,165,0,0.1);
+      border: 1px solid rgba(240,165,0,0.25);
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--accent);
+      animation: fadeDown .6s ease both;
+    }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+ 
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.8rem, 6vw, 5rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -2px;
+      max-width: 820px;
+      animation: fadeDown .7s .1s ease both;
+    }
+ 
+    .hero h1 em {
+      font-style: normal;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+ 
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+      animation: fadeDown .7s .2s ease both;
+    }
+ 
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeDown .7s .3s ease both;
+    }
+ 
+    /* ── STATS STRIP ── */
+    .stats-strip {
+      position: relative; z-index: 1;
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      padding: 0 5% 80px;
+      flex-wrap: wrap;
+      animation: fadeUp .8s .4s ease both;
+    }
+ 
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 52px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+ 
+    /* ── SECTION HEADER ── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 56px;
+    }
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+    }
+    .section-header h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -1px;
+    }
+    .section-header p { color: var(--muted); margin-top: 14px; max-width: 520px; margin-inline: auto; line-height: 1.7; }
+ 
+    /* ── FEATURES ── */
+    .features {
+      position: relative; z-index: 1;
+      padding: 80px 5%;
+    }
+ 
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+ 
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      transition: border-color .25s, transform .25s, box-shadow .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 0% 0%, rgba(240,165,0,0.07), transparent 60%);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .feature-card:hover { border-color: rgba(240,165,0,0.4); transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.35); }
+    .feature-card:hover::before { opacity: 1; }
+ 
+    .feature-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: rgba(240,165,0,0.12);
+      border: 1px solid rgba(240,165,0,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+    .feature-card h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .feature-card p { font-size: 0.88rem; color: var(--muted); line-height: 1.65; }
+ 
+    /* ── HOW IT WORKS ── */
+    .how {
+      position: relative; z-index: 1;
+      padding: 80px 5%;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+ 
+    .steps {
+      display: flex;
+      gap: 0;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      top: 32px;
+      left: calc(16.66% + 24px);
+      right: calc(16.66% + 24px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--border), var(--accent), var(--border));
+      z-index: 0;
+    }
+ 
+    .step {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+      z-index: 1;
+    }
+ 
+    .step-num {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: var(--card);
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+      box-shadow: 0 0 28px rgba(240,165,0,0.2);
+    }
+ 
+    .step h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .step p { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+ 
+    /* ── PRODUCT CARDS PREVIEW ── */
+    .preview {
+      position: relative; z-index: 1;
+      padding: 80px 5%;
+    }
+ 
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+ 
+    .product-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .product-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,0.4); }
+ 
+    .product-img {
+      height: 140px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2.6rem;
+      position: relative;
+    }
+    .product-img-1 { background: linear-gradient(135deg, #1e2030, #252a3e); }
+    .product-img-2 { background: linear-gradient(135deg, #1e2820, #1f3025); }
+    .product-img-3 { background: linear-gradient(135deg, #2a1e1e, #3a2020); }
+    .product-img-4 { background: linear-gradient(135deg, #1e1e2a, #252035); }
+ 
+    .product-badge {
+      position: absolute;
+      top: 10px; right: 10px;
+      font-size: 0.7rem;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-weight: 600;
+    }
+    .badge-public { background: rgba(61,220,151,0.15); color: var(--success); border: 1px solid rgba(61,220,151,0.25); }
+    .badge-private { background: rgba(240,165,0,0.12); color: var(--accent); border: 1px solid rgba(240,165,0,0.2); }
+ 
+    .product-info { padding: 18px 18px 20px; }
+    .product-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.97rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .product-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.55; margin-bottom: 14px; }
+    .product-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .product-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .product-actions { display: flex; gap: 6px; }
+    .icon-btn {
+      width: 30px; height: 30px;
+      border-radius: 7px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all .2s;
+    }
+    .icon-btn:hover { background: rgba(240,165,0,0.12); border-color: var(--accent); color: var(--accent); }
+ 
+    .preview-cta {
+      text-align: center;
+      margin-top: 48px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .preview-cta a { color: var(--accent); text-decoration: none; font-weight: 600; }
+ 
+    /* ── CTA SECTION ── */
+    .cta-section {
+      position: relative; z-index: 1;
+      padding: 80px 5% 100px;
+      text-align: center;
+    }
+ 
+    .cta-box {
+      max-width: 680px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 60px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-box::before {
+      content: '';
+      position: absolute;
+      top: -80px; left: 50%;
+      transform: translateX(-50%);
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(240,165,0,0.12), transparent 70%);
+      pointer-events: none;
+    }
+ 
+    .cta-box h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 14px;
+    }
+    .cta-box p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; margin-bottom: 32px; }
+    .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+ 
+    /* ── FOOTER ── */
+    footer {
+      position: relative; z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 36px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+ 
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+    .footer-logo span { color: var(--accent); }
+ 
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a { color: var(--muted); font-size: 0.85rem; text-decoration: none; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); }
+ 
+    .footer-copy { font-size: 0.78rem; color: var(--muted); }
+ 
+    /* ── ANIMATIONS ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+ 
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .steps { flex-direction: column; gap: 28px; }
+      .steps::before { display: none; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 22px 32px; }
+      .stat-item:last-child { border-bottom: none; }
+      .stats-strip { flex-direction: column; align-items: center; }
+      .cta-box { padding: 36px 24px; }
+      footer { flex-direction: column; align-items: flex-start; }
+      .footer-links { flex-wrap: wrap; gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+ 
+  <!-- Atmosphere -->
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+ 
+  <!-- ── NAV ── -->
+  <nav>
+    <a href="#" class="logo">Prodi<span>fy</span></a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#products">Products</a></li>
+    </ul>
+    <div class="nav-actions">
+      <a href="#" class="btn btn-ghost">Log in</a>
+      <a href="#" class="btn btn-primary">Get started</a>
+    </div>
+  </nav>
+ 
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="badge"><span class="badge-dot"></span> Your products, fully in control</div>
+    <h1>Manage products<br/><em>your way</em></h1>
+    <p>Create, edit, and organize your own products — or explore what the world is sharing. Simple CRUD, powerful visibility controls.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn btn-primary btn-lg">Start for free →</a>
+      <a href="#products" class="btn btn-outline btn-lg">Browse public products</a>
+    </div>
+  </section>
+ 
+  <!-- ── STATS ── -->
+  <div class="stats-strip">
+    <div class="stat-item">
+      <div class="stat-num">12<span>k+</span></div>
+      <div class="stat-label">Products listed</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">4<span>.8k</span></div>
+      <div class="stat-label">Active users</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">99<span>%</span></div>
+      <div class="stat-label">Uptime SLA</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Products per user</div>
+    </div>
+  </div>
+ 
+  <!-- ── FEATURES ── -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <div class="section-tag">Features</div>
+      <h2>Everything you need</h2>
+      <p>A focused toolkit for managing products with ease — no bloat, no confusion.</p>
+    </div>
+ 
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Secure Authentication</h3>
+        <p>Log in securely and access only your own products. Your data is yours — always private until you decide otherwise.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">✏️</div>
+        <h3>Full CRUD Control</h3>
+        <p>Create, update, and delete your products with a clean interface. Every change syncs instantly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>Public Marketplace</h3>
+        <p>Browse products shared publicly by the community. Filter, search, and discover what others are building.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👁️</div>
+        <h3>Visibility Controls</h3>
+        <p>Toggle any product between private and public in one click. You control who sees what.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Instant Updates</h3>
+        <p>Changes to your products are reflected immediately — no page reloads, no waiting.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📦</div>
+        <h3>Unlimited Products</h3>
+        <p>Add as many products as you need. No caps, no tiers — just a place to put everything you work on.</p>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ── HOW IT WORKS ── -->
+  <section class="how" id="how">
+    <div class="section-header">
+      <div class="section-tag">How it works</div>
+      <h2>Up and running in minutes</h2>
+      <p>Three steps from zero to fully managing your product catalog.</p>
+    </div>
+ 
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <h4>Create an account</h4>
+        <p>Sign up in seconds. No credit card, no friction — just an email and password.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <h4>Add your products</h4>
+        <p>Fill in the name, description, price, and any details. Set visibility to private or public.</p>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <h4>Manage & explore</h4>
+        <p>Edit or delete anytime. Browse the public catalog to discover others' work.</p>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ── PRODUCT PREVIEW ── -->
+  <section class="preview" id="products">
+    <div class="section-header">
+      <div class="section-tag">Public Catalog</div>
+      <h2>See what's out there</h2>
+      <p>A glimpse at products shared by the community. Log in to add your own.</p>
+    </div>
+ 
+    <div class="products-grid">
+ 
+      <div class="product-card">
+        <div class="product-img product-img-1">
+          🎧
+          <span class="product-badge badge-public">Public</span>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Studio Headphones X1</div>
+          <div class="product-desc">Noise-cancelling, 40hr battery, studio-grade sound for creators.</div>
+          <div class="product-meta">
+            <div class="product-price">$249</div>
+            <div class="product-actions">
+              <button class="icon-btn" title="Edit">✏️</button>
+              <button class="icon-btn" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="product-card">
+        <div class="product-img product-img-2">
+          🌿
+          <span class="product-badge badge-public">Public</span>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Organic Green Tea</div>
+          <div class="product-desc">Single-origin, hand-picked Matcha from certified farms in Japan.</div>
+          <div class="product-meta">
+            <div class="product-price">$34</div>
+            <div class="product-actions">
+              <button class="icon-btn" title="Edit">✏️</button>
+              <button class="icon-btn" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="product-card">
+        <div class="product-img product-img-3">
+          ⌨️
+          <span class="product-badge badge-private">Private</span>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Mechanical Keyboard Pro</div>
+          <div class="product-desc">Tactile 75% layout, hot-swappable switches, aluminium body.</div>
+          <div class="product-meta">
+            <div class="product-price">$189</div>
+            <div class="product-actions">
+              <button class="icon-btn" title="Edit">✏️</button>
+              <button class="icon-btn" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="product-card">
+        <div class="product-img product-img-4">
+          🖋️
+          <span class="product-badge badge-public">Public</span>
+        </div>
+        <div class="product-info">
+          <div class="product-name">Fountain Pen Elite</div>
+          <div class="product-desc">German-engineered nib, lifetime warranty, luxury writing experience.</div>
+          <div class="product-meta">
+            <div class="product-price">$120</div>
+            <div class="product-actions">
+              <button class="icon-btn" title="Edit">✏️</button>
+              <button class="icon-btn" title="Delete">🗑️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+ 
+    </div>
+ 
+    <div class="preview-cta">
+      <p>Showing 4 of 12,000+ public products. <a href="#">Log in to see all →</a></p>
+    </div>
+  </section>
+ 
+  <!-- ── CTA ── -->
+  <section class="cta-section">
+    <div class="cta-box">
+      <h2>Ready to take control?</h2>
+      <p>Join thousands of users managing their product catalogs on Prodify. Free to start, always in your hands.</p>
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-primary btn-lg">Create free account</a>
+        <a href="#" class="btn btn-outline btn-lg">Log in</a>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo">Prodi<span>fy</span></div>
+    <ul class="footer-links">
+      <li><a href="#">Features</a></li>
+      <li><a href="#">Pricing</a></li>
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Terms</a></li>
+      <li><a href="#">Contact</a></li>
+    </ul>
+    <div class="footer-copy">© 2026 Prodify. All rights reserved.</div>
+  </footer>
+ 
+</body>
+</html>

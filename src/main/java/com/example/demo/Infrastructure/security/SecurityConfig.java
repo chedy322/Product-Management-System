@@ -19,6 +19,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.Infrastructure.security.jwt.JwtAuthFilter;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +36,7 @@ public class SecurityConfig {
  
     
     private  final UserDetailsService userDetailsService;
-
+    private final JwtAuthFilter jwtAuthFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http
@@ -42,19 +44,17 @@ public class SecurityConfig {
         .exceptionHandling(exception-> exception
             .accessDeniedHandler(accessDeniedHandler())
         )
+        // .cors(cors->cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth-> auth
             // for login/register
-            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/auth/**","/main").permitAll()
             .requestMatchers("/api/users/**").hasRole("ADMIN")
             .requestMatchers("/api/products/**").hasRole("USER")
             .anyRequest().authenticated()
         )
-        .authenticationProvider(authenticationProvider());
-        
-        
-         // ── Add JWT filter BEFORE UsernamePassword filter ─
-            // .addFilterBefore(jwt, UsernamePasswordAuthenticationFilter.class);
+        .authenticationProvider(authenticationProvider())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -83,5 +83,10 @@ public class SecurityConfig {
     
     return provider;
     }
+
+    // @Bean
+    // public Cors corsConfigurationSource(){
+
+    // }
 
 }
