@@ -17,6 +17,7 @@ on:
 jobs:
     test:
         name: Run tests
+        environment: CI/CD
         runs-on: ${{inputs.os}}
         steps:
 
@@ -32,6 +33,10 @@ jobs:
 
         -   name: Run tests
             run: mvn verify
+            env:
+                JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                GMAIL_USERNAME: ${{secrets.GMAIL_USERNAME}}
+                GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD}}
 
 
             # upload the xml file
