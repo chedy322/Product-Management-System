@@ -1,9 +1,9 @@
-FROM eclipse-temurin:25-jdk-alpine AS build
+FROM maven:3.9.6-eclipse-temurin-25 AS build
 WORKDIR /app
 
-RUN apt-get update && apt-get install -y maven \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y maven \
+#     && apt-get clean \
+#     && rm -rf /var/lib/apt/lists/*
 COPY pom.xml .
 RUN mvn dependency:go-offline
 
