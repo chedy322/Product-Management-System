@@ -3,10 +3,10 @@ package com.example.demo.Application.product;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.jar.Attributes;
 
 import org.springframework.stereotype.Service;
 
+import com.example.demo.Application.dto.authenticatedUser.AuthenticatedUser;
 import com.example.demo.Application.product.dto.ProductRequest;
 import com.example.demo.Application.product.dto.ProductResponse;
 import com.example.demo.Application.product.dto.UpdateProductRequest;
@@ -38,7 +38,7 @@ public class ProductService {
 
     // create
     @Transactional
-    public Result<ProductResponse> create(ProductRequest productRequest){
+    public Result<ProductResponse> create(ProductRequest productRequest,AuthenticatedUser authenticatedUser){
         // Create name valeu object
         Result<Name> nameResult=Name.create(productRequest.name()); 
         if(nameResult.isFailure()){
@@ -59,12 +59,14 @@ public class ProductService {
         }
         Stock stock=stockResult.getValue();
 
+    
         // Create product instance
         Result<Product> productResult = Product.create(
             name,
             productRequest.description(),
             productRequest.price(),
-            stock
+            stock,
+            authenticatedUser.id()
         );
         if(productResult.isFailure()){
             return Result.Failure(productResult.getError());
@@ -81,21 +83,24 @@ public class ProductService {
         return Result.Success(productResponse);
     }
 
-    // delete
+    // delete by id onlly for admin
+    // we need delete by userId and id
     @Transactional 
-    public Result<Boolean> deleteById(UUID id){
+    public Result<Boolean> deleteById(UUID id,AuthenticatedUser authenticatedUser){
         // check if the product exists or no
         Optional<Product> productResult=productRepository.findById(id);
         if(productResult.isEmpty()){
             return Result.Failure(Error.NOT_FOUND("Product not found"));
         }
-       boolean productDeleted= productRepository.deleteById(id);
+        // get user id
+        UUID userId=authenticatedUser.id();
+       boolean productDeleted= productRepository.deleteByIdAndUserId(id,userId);
        return Result.Success(productDeleted);
     }
 
 
 
-    // findall
+    // findall products is public route
     public Result<List<ProductResponse>> findAll(){
         log.info("Extracting products data");
        return Result.Success(productRepository.findAll().stream().map(ProductResponse::mapToResponse).toList());
@@ -116,14 +121,13 @@ public class ProductService {
     }
     // update by id by field 
     @Transactional
-    public Result<ProductResponse> updateProduct(UUID productId,UpdateProductRequest request){
+    public Result<ProductResponse> updateProduct(UUID productId,UpdateProductRequest request,AuthenticatedUser authenticatedUser){
         // check for the product in db
-        Optional<Product> productResult=productRepository.findById(productId);
-        Product productDomain=productResult.get();
+        Optional<Product> productResult=productRepository.findByIdAndUserId(productId,authenticatedUser.id());
         if(productResult.isEmpty()){
-            // return Result.Failure("Product does not exist");
-            return Result.Failure(Error.NOT_FOUND("Product does not exist"));
+            return Result.Failure(Error.NOT_FOUND("Unable to update product."));
         }
+        Product productDomain=productResult.get();
         if(request.name()!=null){
             Result<Name> productDomainName=productDomain.updateName(request.name());
             if(productDomainName.isFailure()){
@@ -139,8 +143,6 @@ public class ProductService {
 
             }
         }
-
-        // add price
    
         // save the changes to db
         Product product=productRepository.save(productResult.get());

@@ -17,7 +17,7 @@ public class UserMapper {
         return userResult.getValue();
     }
 
-    // Transform User entity in domain in UserEntity in db
+    // Transform User entity from domain in UserEntity in db
     public static UserEntity toUserEntity(User userDomain){
         UserEntity userEntity=new UserEntity(userDomain.getUsername(),userDomain.getEmail(),userDomain.getPassword());
         if(userDomain.getId()!=null){
@@ -27,6 +27,11 @@ public class UserMapper {
             userEntity.setRole(userDomain.getRole());
         }
         userEntity.setBlocked(userDomain.isBlocked());
+        // set the createdAt and updatedAt
+        if(userDomain.getCreatedAt()!=null){
+            userEntity.setCreatedAt(userDomain.getCreatedAt());
+        }
+        userEntity.setUpdatedAt(userDomain.getUpdatedAt());
         return userEntity;
 
     }

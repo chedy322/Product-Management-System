@@ -18,4 +18,8 @@ public interface ProductRepository {
 
     // Delete
     boolean deleteById(UUID id);
+    // findBu userId
+    Optional<Product> findByUserId(UUID userId);
+    boolean deleteByIdAndUserId(UUID Id,UUID userId);
+    Optional<Product> findByIdAndUserId(UUID id,UUID userId);
 }

@@ -19,6 +19,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.example.demo.Infrastructure.security.jwt.CustomUserDetailsService;
 import com.example.demo.Infrastructure.security.jwt.JwtAuthFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -35,7 +36,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
  
     
-    private  final UserDetailsService userDetailsService;
+    private  final CustomUserDetailsService userDetailsService;
     private final JwtAuthFilter jwtAuthFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -48,7 +49,10 @@ public class SecurityConfig {
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth-> auth
             // for login/register
-            .requestMatchers("/api/auth/**","/main").permitAll()
+            .requestMatchers("/api/auth/logout").authenticated() 
+            // 2. GENERAL: Login and Register are public
+            .requestMatchers("/api/auth/login", "/api/auth/register", "/main").permitAll()
+            // .requestMatchers("/api/auth/**","/main").permitAll()
             .requestMatchers("/api/users/**").hasRole("ADMIN")
             .requestMatchers("/api/products/**").hasRole("USER")
             .anyRequest().authenticated()

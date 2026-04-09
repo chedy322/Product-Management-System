@@ -2,10 +2,12 @@ package com.example.demo.Application.auth.dto;
 
 public record AuthTokenResponse(
     String accessToken,
-    String tokenType
+    String refreshToken
     
 ) {
-    public static AuthTokenResponse map(String token){
-        return new AuthTokenResponse(token,"Bearer");
+    public static AuthTokenResponse map(String accessToken,String refreshToken){
+        return new AuthTokenResponse(
+            accessToken,refreshToken
+        );
     }
 }

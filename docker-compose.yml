@@ -2,7 +2,7 @@ services:
   spring-api:
     image: my-spring-app
     depends_on:
-      postgree-db:
+      postgres-db:
         condition: service_healthy
 
     build:
@@ -17,7 +17,7 @@ services:
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
     
-  postgree-db:
+  postgres-db:
     image: postgres:18-alpine
     restart: always
     networks:

@@ -6,12 +6,14 @@ import java.util.UUID;
 import java.util.stream.StreamSupport;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.demo.Application.dto.authenticatedUser.AuthenticatedUser;
 import com.example.demo.Application.product.ProductService;
 import com.example.demo.Application.product.dto.ProductRequest;
 
@@ -27,6 +29,7 @@ import com.example.demo.Application.product.dto.UpdateProductRequest;
 import com.example.demo.Domain.exceptions.DomainExceptions;
 import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.shared.Result;
+import com.example.demo.Infrastructure.security.jwt.CustomUserDetails;
 import com.example.demo.Domain.shared.Error;
 
 
@@ -71,8 +74,11 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> createProduct(@Valid @RequestBody ProductRequest entity) {
-        Result<ProductResponse> createdProduct = productService.create(entity);
+    public ResponseEntity<?> createProduct(@AuthenticationPrincipal CustomUserDetails user,@Valid @RequestBody ProductRequest entity) {
+        // map the current user to authenticatedUser 
+        AuthenticatedUser authenticatedUser=AuthenticatedUser.map(user.getUserId(), user.getUserEmail(), user.getUsername());
+
+        Result<ProductResponse> createdProduct = productService.create(entity,authenticatedUser);
         if(createdProduct.isFailure()){
             Error error=createdProduct.getError();
             // return ResponseEntity.status(error.httpStatus()).body(error.errorMsg());
@@ -82,8 +88,9 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProduct(@PathVariable("id") UUID productId) {
-        Result<Boolean> productResult=productService.deleteById(productId);
+    public ResponseEntity<?> deleteProduct(@AuthenticationPrincipal CustomUserDetails user,@PathVariable("id") UUID productId) {
+        AuthenticatedUser authenticatedUser=AuthenticatedUser.map(user.getUserId(), user.getUserEmail(), user.getUsername());
+        Result<Boolean> productResult=productService.deleteById(productId,authenticatedUser);
         if(productResult.isFailure()){
             // throw new RuntimeException("Product not deleted: " + productResult.getError());
             Error error=productResult.getError();
@@ -94,8 +101,9 @@ public class ProductController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProduct(@PathVariable("id") UUID productId,@RequestBody(required = false) UpdateProductRequest productRequest) {
-            Result<ProductResponse> productUpdateResult=productService.updateProduct(productId, productRequest);
+    public ResponseEntity<?> updateProduct(@AuthenticationPrincipal CustomUserDetails user,@PathVariable("id") UUID productId,@RequestBody(required = false) UpdateProductRequest productRequest) {
+                AuthenticatedUser authenticatedUser=AuthenticatedUser.map(user.getUserId(), user.getUserEmail(), user.getUsername());
+            Result<ProductResponse> productUpdateResult=productService.updateProduct(productId, productRequest,authenticatedUser);
             if(productUpdateResult.isFailure()){
                 Error error=productUpdateResult.getError();
                  throw new DomainExceptions(error);

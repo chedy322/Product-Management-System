@@ -10,31 +10,23 @@ import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.product.ValueObjects.Name;
 import com.example.demo.Domain.product.ValueObjects.Stock;
 import com.example.demo.Domain.product.interfaces.ProductRepository;
+import com.example.demo.Infrastructure.persistence.user.JpaUserRepository;
+import com.example.demo.Infrastructure.persistence.user.UserEntity;
 
 @Repository
 public class ProductPersistenceAdapter implements ProductRepository {
     private JpaProductRepository jpaProductRepository;
-    public ProductPersistenceAdapter(JpaProductRepository jpaProductRepository){
+    private JpaUserRepository jpaUserRepository;
+    public ProductPersistenceAdapter(JpaProductRepository jpaProductRepository,JpaUserRepository jpaUserRepository){
         this.jpaProductRepository=jpaProductRepository;
+        this.jpaUserRepository=jpaUserRepository;
     }
     @Override
     public Product save(Product product) {
-    //      ProductEntity entity;
-         
-    //      if(product.getId() != null){
-    //     entity = jpaProductRepository.findById(product.getId())
-    //             .orElseThrow(() -> new RuntimeException("Product not found"));
+        // get the userRef
+        UserEntity userRef=jpaUserRepository.getReferenceById(product.getOwnerId());
+        ProductEntity productEntity=ProductMapper.toProductEntity(product,userRef);
 
-    //     entity.setName(product.getName().getValue());
-    //     entity.setPrice(product.getPrice());
-    //     entity.setStock(product.getStock().getValue());
-    //     entity.setDescription(product.getDescription());
-
-    // }else{
-    //     entity = ProductMapper.toProductEntity(product);
-    // }
-   
-        ProductEntity productEntity=ProductMapper.toProductEntity(product);
         ProductEntity savedEntity=jpaProductRepository.save(productEntity);
 
         return Product.reconstruct(
@@ -42,7 +34,8 @@ public class ProductPersistenceAdapter implements ProductRepository {
         Name.create(savedEntity.getName()).getValue(),
         savedEntity.getDescription(),
         savedEntity.getPrice(),
-        Stock.create(savedEntity.getStock()).getValue()
+        Stock.create(savedEntity.getStock()).getValue(),
+        savedEntity.getUser().getId()
     ).getValue();
     }
 
@@ -75,4 +68,29 @@ public class ProductPersistenceAdapter implements ProductRepository {
         }
         return false;
     }
+
+    @Override
+    public Optional<Product> findByUserId(UUID userId) {
+        Optional<ProductEntity> productEntity=jpaProductRepository.findByUserId(userId);
+        // map the productEntity into product domain entity
+        Optional<Product> productDomainEntity=productEntity.map(ProductMapper::toDomain);
+        return productDomainEntity;
+    }
+
+    @Override
+    public boolean deleteByIdAndUserId(UUID Id, UUID userId) {
+        if(jpaProductRepository.existsByIdAndUserId(Id, userId)){
+            jpaProductRepository.deleteByIdAndUserId(Id, userId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public Optional<Product> findByIdAndUserId(UUID id, UUID userId) {
+        Optional<ProductEntity> productEntity=jpaProductRepository.findByIdAndUserId(id, userId);
+        Optional<Product> productDomainEntity=productEntity.map(ProductMapper::toDomain);
+        return productDomainEntity;
+    }
+
 }

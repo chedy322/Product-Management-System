@@ -1,0 +1,27 @@
+change from userDetails.user to customUserDetail that has userDetails
+and change what need to be changed
+
+//Finish from refreshtoken service
+add logout done
+//Finish from here
+
+Fix the DTO
+
+use the Spring Profile-Specific Properties for docker 
+Fix some maybe log in or register vulnabirilies like retunr generic errors isntead
+
+user creating product with making one to many realtion ship between user and products
+-------One user can create many products and one product belong to one user only
+
+move on with public and private routes with access role based for user and admin 
+and user only access his own data only
+
+Encrypt the tokens  as extra security
+
+
+
+
+
+
+
+

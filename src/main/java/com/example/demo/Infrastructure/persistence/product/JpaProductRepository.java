@@ -10,4 +10,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface JpaProductRepository  extends JpaRepository<ProductEntity,UUID>{
     Optional<ProductEntity> findByName(String name);
+    void deleteByIdAndUserId(UUID id,UUID userId);
+    Optional<ProductEntity> findByUserId(UUID userId);
+    boolean existsByIdAndUserId(UUID id,UUID userId);
+    Optional<ProductEntity> findByIdAndUserId(UUID id ,UUID userId);
+    
 }

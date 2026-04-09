@@ -1,4 +1,4 @@
-FROM maven:3.9.6-eclipse-temurin-25 AS build
+FROM maven:4.0.0-rc-5-eclipse-temurin-25-noble AS build
 WORKDIR /app
 
 # RUN apt-get update && apt-get install -y maven \
@@ -13,8 +13,14 @@ RUN mvn clean install -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:25-jre-alpine
-WORKDIR /app
 
-COPY --from=build /app/target/*.jar app.jar
+RUN addgroup -S groupuser && adduser -G groupuser -S myuser -D
+WORKDIR /app
+COPY --from=build --chown=myuser:groupuser /app/target/*.jar app.jar
+
+# change to non root user
+USER myuser
+
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

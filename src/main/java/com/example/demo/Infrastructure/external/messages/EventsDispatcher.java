@@ -1,4 +1,4 @@
-package com.example.demo.Infrastructure.messages;
+package com.example.demo.Infrastructure.external.messages;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;

@@ -1,4 +1,4 @@
-package com.example.demo.Infrastructure.config.email;
+package com.example.demo.Infrastructure.external.email;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

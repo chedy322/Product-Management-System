@@ -16,22 +16,25 @@ public class Product extends Aggregate{
     // make value object here
     private int price;
     private Stock stock; 
-    private Product (UUID id,Name name,String description,int price,Stock stock){
+    private UUID ownerId;
+
+    private Product (UUID id,Name name,String description,int price,Stock stock,UUID ownerId){
         // generate random uuid for the entity
         super(id);
         this.name=name;
         this.description=description;
         this.price=price;
         this.stock=stock;
+        this.ownerId=ownerId;
     }
-     public static Result<Product> create (Name name,String description,int price,Stock stock){
-        Product product=new Product(UUID.randomUUID(),name, description, price, stock);
+     public static Result<Product> create (Name name,String description,int price,Stock stock,UUID ownerId){
+        Product product=new Product(UUID.randomUUID(),name, description, price, stock,ownerId);
         // register event
         product.registerEvent(new ProductCreated(product.getId(),product.getName()));
         return Result.Success(product);
     }
-       public static Result<Product> reconstruct(UUID id,Name name,String description,int price,Stock stock){
-         Product product=new Product(id,name, description, price, stock);
+       public static Result<Product> reconstruct(UUID id,Name name,String description,int price,Stock stock,UUID ownerId){
+         Product product=new Product(id,name, description, price, stock,ownerId);
         return Result.Success(product);
     }
 
@@ -40,7 +43,8 @@ public class Product extends Aggregate{
     public String getDescription(){ return description;}
     public int getPrice(){ return price;}
     public Stock getStock(){ return stock;}
-
+    public UUID getOwnerId(){return ownerId;}
+    
     // setter
     public Result<Stock> updateStock(int amount) {
         Result<Stock> stockResult=stock.addStock(amount);

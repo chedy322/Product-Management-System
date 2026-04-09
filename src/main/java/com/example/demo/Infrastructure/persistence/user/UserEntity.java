@@ -8,24 +8,30 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.example.demo.Infrastructure.config.Enum.UserRole;
+import com.example.demo.Infrastructure.persistence.product.ProductEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @NoArgsConstructor
-@Data
+@Getter
+@Setter
 @Table(name="users")
 public class UserEntity {
      public UserEntity(String username,String email,String password){
@@ -54,25 +60,12 @@ public class UserEntity {
     @Column(name = "blocked")
     private boolean blocked=false;
     
-    @CreationTimestamp
-    @Setter(AccessLevel.NONE)
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     private LocalDateTime updatedAt;
     
-
+  
    
-    // public UUID getId(){return id;}
-    // public void setId(UUID id){this.id=id;}
-    // public String getEmail(){return email;}
-    // public String getPassword(){return password;}
-    // public UserRole getRole(){return role;}
-    // public boolean getBlocked(){return blocked;}
-    // public String getUsername(){return username;}
-    // public void setRole(UserRole role){this.role=role;}
-    // public void setBlocked(boolean blocked){this.blocked=blocked;}
-    // public LocalDateTime getCreatedAt(){return createdAt;}
-    // public LocalDateTime getUpDatedAt(){return updatedAt;}
+    
 }
