@@ -14,31 +14,32 @@ import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Domain.user.interfaces.UserRepository;
 import com.example.demo.Domain.user.services.CheckUserEmailUniqueness;
 import com.example.demo.Domain.user.services.CheckUsernameUniqueness;
+import com.example.demo.Infrastructure.config.Enum.UserRole;
+
 
 import jakarta.transaction.Transactional;
 
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
+import com.example.demo.Domain.refreshToken.interfaces.RefreshTokenRepository;
 import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
 
 
 @Service
 public class UserService {
-    private UserRepository userRepository;
-    
-    public UserService(UserRepository userRepository){
+    private final UserRepository userRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    public UserService(UserRepository userRepository,RefreshTokenRepository refreshTokenRepository){
         this.userRepository=userRepository;
-        
+        this.refreshTokenRepository=refreshTokenRepository;
     }
 
-
-
-
-    public Result<List<UserResponse>> findAll(){
-        return Result.Success(userRepository.findAll().stream().map(UserResponse::UserMapper).toList());
+    // thse methods are for ADMIN 
+       public Result<List<User>> findAll(){
+        return Result.Success(userRepository.findAll());
     }
 
-    public Result<UserResponse> findById(UUID userId){
+    public Result<User> findById(UUID userId){
         //find user in db
         Optional<User> existingUser=userRepository.findById(userId);
         if(existingUser.isEmpty()){
@@ -46,10 +47,8 @@ public class UserService {
         }
         // user domain
         User userDomain=existingUser.get();
-        // DTO
-        UserResponse userResultResponse=UserResponse.UserMapper(userDomain);
 
-        return Result.Success(userResultResponse);
+        return Result.Success(userDomain);
     }
 
     public Result<Boolean> deleteById(UUID userId){
@@ -64,7 +63,27 @@ public class UserService {
     }
 
     @Transactional
-    public Result<UserResponse> updateUser(UUID userId,UpdateUserRequest userRequest){
+     public Result<Boolean> changeRoleStatus(UUID userToUpgradeId,UserRole upgradedRole){
+        // 1. check if the user exists in db
+        Optional<User> existingUser=userRepository.findById(userToUpgradeId);
+        if(existingUser.isEmpty()){
+            return Result.Failure(Error.NOT_FOUND("User not found"));
+        }
+        // 2. get  user data
+        User existingUserData=existingUser.get();
+        // 3. change the status and save to db
+        existingUserData.ChangeRole(upgradedRole);
+        userRepository.save(existingUserData);
+        // 4. Invalidate all refreshTokens from db for security
+        refreshTokenRepository.deleteByUserId(userToUpgradeId);
+        return Result.Success(true);
+
+
+    }
+
+    // this method is for ADMIN and USER
+    @Transactional
+    public Result<User> updateUser(UUID userId,UpdateUserRequest userRequest){
         // 1. check if user exists in db
           Optional<User> existingUser=userRepository.findById(userId);
         if(existingUser.isEmpty()){
@@ -85,10 +104,11 @@ public class UserService {
         
         // 4. save changes to db
         userRepository.save(user);
-        // 5. change return to UserResposne
-        UserResponse userResponse=UserResponse.UserMapper(user);
-        return Result.Success(userResponse);
+       
+        return Result.Success(user);
 
 
     }
+
+    // public booelan findCurrentUserData()
 }

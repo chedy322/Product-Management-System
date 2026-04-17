@@ -108,7 +108,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String,String>> logout(@AuthenticationPrincipal CustomUserDetails user,HttpServletResponse resposne) {
+    
+    public ResponseEntity<Map<String,String>> logout(@AuthenticationPrincipal CustomUserDetails user,HttpServletResponse response) {
         
         if(user==null){
             return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
@@ -130,8 +131,8 @@ public class AuthController {
     refreshCookie.setPath("/");
     refreshCookie.setMaxAge(0);
 
-    resposne.addCookie(accessCookie);
-    resposne.addCookie(refreshCookie);
+    response.addCookie(accessCookie);
+    response.addCookie(refreshCookie);
 
         return ResponseEntity.status(200).body(Map.of("message","Logged out succesfully"));
     }

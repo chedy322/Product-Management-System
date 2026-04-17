@@ -52,9 +52,10 @@ public class SecurityConfig {
             .requestMatchers("/api/auth/logout").authenticated() 
             // 2. GENERAL: Login and Register are public
             .requestMatchers("/api/auth/login", "/api/auth/register", "/main").permitAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
             // .requestMatchers("/api/auth/**","/main").permitAll()
-            .requestMatchers("/api/users/**").hasRole("ADMIN")
-            .requestMatchers("/api/products/**").hasRole("USER")
+            .requestMatchers("/api/users/**").hasAnyRole("ADMIN","USER")
+            .requestMatchers("/api/products/**").hasAnyRole("ADMIN","USER")
             .anyRequest().authenticated()
         )
         .authenticationProvider(authenticationProvider())

@@ -113,7 +113,7 @@ public class ProductService {
         if(productResult.isEmpty()){
             return Result.Failure(Error.NOT_FOUND("Product does not exists"));
         }
-
+        System.err.println("Product is converting to dto");
         // DTO
         ProductResponse productResponse=ProductResponse.mapToResponse(productResult.get());
         return Result.Success(productResponse);

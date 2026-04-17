@@ -74,6 +74,7 @@ public class ProductController {
     }
 
     @PostMapping("")
+    
     public ResponseEntity<?> createProduct(@AuthenticationPrincipal CustomUserDetails user,@Valid @RequestBody ProductRequest entity) {
         // map the current user to authenticatedUser 
         AuthenticatedUser authenticatedUser=AuthenticatedUser.map(user.getUserId(), user.getUserEmail(), user.getUsername());
