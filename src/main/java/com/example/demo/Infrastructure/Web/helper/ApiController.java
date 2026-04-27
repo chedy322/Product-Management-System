@@ -1,13 +1,12 @@
 package com.example.demo.Infrastructure.Web.helper;
 
+import java.util.Map;
 import java.util.function.Function;
 
 import org.springframework.http.ResponseEntity;
 
 import com.example.demo.Domain.shared.Result;
-
-
-
+import com.example.demo.Domain.exceptions.DomainExceptions;
 import  com.example.demo.Domain.shared.Error;
 
 
@@ -24,6 +23,7 @@ public abstract class ApiController {
     // this method is for default ok
     protected <T,R> ResponseEntity<?> handleResult(Result<T> result, Function<T, R> mapper){
         if(result.isFailure()){
+            // System.err.println(result.getError().errorMsg());
             mapFailureToResult(result.getError());
         }
         R responseResult=mapper.apply(result.getValue());
@@ -39,7 +39,8 @@ public abstract class ApiController {
 
     // This is for handling error 
     protected<T> ResponseEntity<?> mapFailureToResult(Error error){
-        return ResponseEntity.status(error.httpStatus()).body(error.errorMsg());
+        // return ResponseEntity.status(error.httpStatus()).body(Map.of("error",error.errorMsg()));
+        throw new DomainExceptions(error);
     }
 
 }

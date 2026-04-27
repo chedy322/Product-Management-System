@@ -10,7 +10,9 @@ import com.example.demo.Application.dto.authenticatedUser.AuthenticatedUser;
 import com.example.demo.Application.product.dto.ProductRequest;
 import com.example.demo.Application.product.dto.ProductResponse;
 import com.example.demo.Application.product.dto.UpdateProductRequest;
+
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
+
 import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.product.ValueObjects.Name;
 import com.example.demo.Domain.product.ValueObjects.Stock;
@@ -30,9 +32,9 @@ public class ProductService {
     private DomainEventPublisher domainEventPublisher;
 
 
-    public ProductService(ProductRepository productRepository,CheckProductNameUniqueness CheckProductNameUniqueness,DomainEventPublisher domainEventPublisher ){
+    public ProductService(ProductRepository productRepository,CheckProductNameUniqueness checkProductNameUniqueness,DomainEventPublisher domainEventPublisher){
         this.productRepository=productRepository;
-        this.checkProductNameUniqueness=CheckProductNameUniqueness;
+        this.checkProductNameUniqueness=checkProductNameUniqueness;
         this.domainEventPublisher=domainEventPublisher;
     }
 
@@ -100,25 +102,25 @@ public class ProductService {
 
 
 
-    // findall products is public route
-    public Result<List<ProductResponse>> findAll(){
-        log.info("Extracting products data");
-       return Result.Success(productRepository.findAll().stream().map(ProductResponse::mapToResponse).toList());
-    }
+    // // findall products is public route
+    // public Result<List<ProductResponse>> findAll(){
+    //    return Result.Success(productRepository.findAll().stream().map(ProductResponse::mapToResponse).toList());
+    // }
+
 
     // findbyId
-    public Result<ProductResponse> findById(UUID productId){
-        // check if the product exists in db
-        Optional<Product> productResult=productRepository.findById(productId);
-        if(productResult.isEmpty()){
-            return Result.Failure(Error.NOT_FOUND("Product does not exists"));
-        }
-        System.err.println("Product is converting to dto");
-        // DTO
-        ProductResponse productResponse=ProductResponse.mapToResponse(productResult.get());
-        return Result.Success(productResponse);
+    // public Result<ProductResponse> findById(UUID productId){
+    //     // check if the product exists in db
+    //     Optional<Product> productResult=productRepository.findById(productId);
+    //     if(productResult.isEmpty()){
+    //         return Result.Failure(Error.NOT_FOUND("Product does not exists"));
+    //     }
+    //     System.err.println("Product is converting to dto");
+    //     // DTO
+    //     ProductResponse productResponse=ProductResponse.mapToResponse(productResult.get());
+    //     return Result.Success(productResponse);
 
-    }
+    // }
     // update by id by field 
     @Transactional
     public Result<ProductResponse> updateProduct(UUID productId,UpdateProductRequest request,AuthenticatedUser authenticatedUser){

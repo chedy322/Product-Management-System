@@ -13,13 +13,11 @@ public interface ProductRepository {
 
     // Read
     Optional<Product> findById(UUID id); 
+    List<Product> findByUserId(UUID userId);
     Optional<Product> findByName(Name name);
-    List<Product> findAll();
-
     // Delete
     boolean deleteById(UUID id);
     // findBu userId
-    Optional<Product> findByUserId(UUID userId);
     boolean deleteByIdAndUserId(UUID Id,UUID userId);
     Optional<Product> findByIdAndUserId(UUID id,UUID userId);
 }

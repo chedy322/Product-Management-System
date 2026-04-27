@@ -16,6 +16,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgree-db:5432/ProductDatabase
       - DB_USERNAME=${DB_USERNAME}
       - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
     
   postgres-db:
     image: postgres:18-alpine

@@ -1,5 +1,6 @@
 package com.example.demo.Infrastructure.Web;
 
+import com.example.demo.Application.product.listeners.SendEmailOnProductCreated;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,6 +10,7 @@ import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
 import com.example.demo.Domain.user.entities.User;
 import com.example.demo.Infrastructure.Web.dto.adminController.RequestChangeRoleStatus;
+import com.example.demo.Infrastructure.Web.dto.adminController.ResponseDeleteUser;
 import com.example.demo.Infrastructure.Web.dto.adminController.ResponseUserDetails;
 import com.example.demo.Infrastructure.Web.dto.adminController.UserSummaryResponse;
 import com.example.demo.Infrastructure.config.Enum.UserRole;
@@ -30,6 +32,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 
 
@@ -84,6 +87,4 @@ public class AdminController extends ApiController{
 
         
     }
-
-    
 }

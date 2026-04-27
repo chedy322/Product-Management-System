@@ -28,7 +28,7 @@ import com.example.demo.Domain.shared.Error;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/user")
 public class UserController {
  private UserService userService;
     public UserController(UserService userService){

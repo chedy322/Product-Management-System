@@ -51,7 +51,7 @@ public class UserService {
         return Result.Success(userDomain);
     }
 
-    public Result<Boolean> deleteById(UUID userId){
+    public Result<String> deleteById(UUID userId){
         // 1. check user exists in db
         Optional<User> existingUser=userRepository.findById(userId);
         if(existingUser.isEmpty()){
@@ -59,7 +59,7 @@ public class UserService {
         }
         // 2. delete user from db
         userRepository.deleteById(userId);
-        return Result.Success(true);
+        return Result.Success("User deleted succesfully");
     }
 
     @Transactional
