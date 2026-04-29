@@ -1,15 +1,12 @@
 FROM maven:4.0.0-rc-5-eclipse-temurin-25-noble AS build
 WORKDIR /app
 
-# RUN apt-get update && apt-get install -y maven \
-#     && apt-get clean \
-#     && rm -rf /var/lib/apt/lists/*
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN --mount=type=cache,target=/root/.m2 mvn dependency:go-offline
 
 COPY src ./src
 # Skip test and build the jar
-RUN mvn clean install -DskipTests
+RUN --mount=type=cache,target=/root/.m2 mvn clean install -DskipTests
 
 # Stage 2: Run the application
 FROM eclipse-temurin:25-jre-alpine

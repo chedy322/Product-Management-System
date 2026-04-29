@@ -56,8 +56,8 @@ jobs:
                     GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
                     GITGUARDIAN_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
 
-    test:
-        needs: [changes]
+    unit-test:
+        needs: [changes,GitGuardian-scanning]
         if: ${{needs.changes.outputs.backend=='true'}}
         strategy:
             matrix:
@@ -67,7 +67,8 @@ jobs:
         with:
             os: ${{matrix.os}}
             java: "25"
-        
+    
+    # Run CodeQl test (SAST test)
     # security-test:
     #     needs: changes
     #     if: ${{needs.changes.outputs.backend=='true'}}
@@ -102,7 +103,7 @@ jobs:
 
 # build docker image
     Build-deploy-image:
-        needs: [test,changes,GitGuardian-scanning]
+        needs: [unit-test,changes,GitGuardian-scanning]
         runs-on: "ubuntu-latest"
         if: github.event_name!='pull_request' && success()
         outputs:
