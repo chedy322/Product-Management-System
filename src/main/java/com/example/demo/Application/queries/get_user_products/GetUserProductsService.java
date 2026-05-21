@@ -7,5 +7,5 @@ import java.util.UUID;
 
 
 public interface GetUserProductsService {
-     List<GetUserProductsDTO> findProductsByUserId(UUID userId);
+     List<GetUserProductsDTO> findProductsByUserId(UUID userId,int offset,int limit);
 }

@@ -15,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -44,10 +45,13 @@ public class SecurityConfig {
         .csrf(csrf-> csrf.disable())
         .exceptionHandling(exception-> exception
             .accessDeniedHandler(accessDeniedHandler())
+            .authenticationEntryPoint(unauthorizedHandler())
         )
         // .cors(cors->cors.configurationSource(corsConfigurationSource()))
         .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth-> auth
+                 .requestMatchers("/actuator/prometheus").permitAll()
+                .requestMatchers("/actuator/health").permitAll()
             // for login/register
             .requestMatchers("/api/auth/logout").authenticated() 
             // 2. GENERAL: Login and Register are public
@@ -64,13 +68,23 @@ public class SecurityConfig {
         return http.build();
     }
 
-     @Bean
+    @Bean
     public AccessDeniedHandler accessDeniedHandler() {
         return (request, response, ex) -> {
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json");
             response.getWriter().write("""
                 {"error": "Access Denied", "message": "You don't have permission to access this resource"}
+                """);
+        };
+    }
+    @Bean
+    public AuthenticationEntryPoint unauthorizedHandler() {
+        return (request, response, ex) -> {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("""
+                {"error": "Access Denied", "message": "Token is missing, invalid, or expired"}
                 """);
         };
     }

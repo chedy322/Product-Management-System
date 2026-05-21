@@ -42,6 +42,8 @@ public class globalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleAllUncaughtException(Exception ex) {
+        System.err.println(ex.getMessage());
+        System.err.println(ex.toString());
         return ResponseEntity.internalServerError().body(Map.of(
             "error", "SERVER_ERROR",
             "message", "Internal system failure."

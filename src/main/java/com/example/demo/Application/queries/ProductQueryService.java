@@ -13,5 +13,5 @@ public interface ProductQueryService {
       // Read
     Optional<GetProductByIdDTO> getProductViewById(UUID id); 
     // Optional<Product> getProductViewByName(Name name);
-    List<GetAllProductsDTO> getProductsView();
+    List<GetAllProductsDTO> getProductsView(int offset,int limit);
 }

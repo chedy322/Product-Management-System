@@ -54,9 +54,9 @@ public class ProductController extends ApiController{
     private final GetAllProductsHandler getAllProductsHandler;
     private final GetProductByIdHandler getProductByIdHandler;
     @GetMapping("")
-    public ResponseEntity<?> getProducts() {
+    public ResponseEntity<?> getProducts(@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "3") int limit) {
         // Implementation for creating a product
-        Result<List<GetAllProductsDTO>> productsResult= getAllProductsHandler.handle();
+        Result<List<GetAllProductsDTO>> productsResult= getAllProductsHandler.handle(page,limit);
         if(productsResult.isFailure()){
             // throw new RuntimeException("Could not fetch products: " + productsResult.getError());
             Error error=productsResult.getError();
@@ -118,9 +118,9 @@ public class ProductController extends ApiController{
     }
 
     @GetMapping("/me")
-    public ResponseEntity<?> getUserProducts(@AuthenticationPrincipal CustomUserDetails user) {
+    public ResponseEntity<?> getUserProducts(@AuthenticationPrincipal CustomUserDetails user,@RequestParam(defaultValue = "1") int page,@RequestParam(defaultValue = "3") int limit) {
          AuthenticatedUser authenticatedUser=AuthenticatedUser.map(user.getUserId(), user.getUserEmail(), user.getUsername());
-        Result<List<GetUserProductsDTO>> productResult=getUserProductsService.handle(authenticatedUser);
+        Result<List<GetUserProductsDTO>> productResult=getUserProductsService.handle(authenticatedUser,page,limit);
         return handleResult(productResult);
     }
     

@@ -20,18 +20,22 @@ public interface JpaProductRepository  extends JpaRepository<ProductEntity,UUID>
     boolean existsByIdAndUserId(UUID id,UUID userId);
     Optional<ProductEntity> findByIdAndUserId(UUID id ,UUID userId);
     
-    @Query("SELECT  new com.example.demo.Application.queries.get_user_products.GetUserProductsDTO(p.id, p.name, u.username, p.price)"+
+    @Query("SELECT  new com.example.demo.Application.queries.get_user_products.GetUserProductsDTO(p.id, p.name, u.username, p.price) "+
         "FROM ProductEntity p JOIN p.user u "+
-        "WHERE u.id = :userId "
-    )
-    List<GetUserProductsDTO> findAllUserProductsSummary(UUID userId);
+        "WHERE u.id = :userId "+
+        "ORDER BY p.createdAt "+
+        "LIMIT :limit OFFSET :offset "
+    ) 
+    List<GetUserProductsDTO> findAllUserProductsSummary(UUID userId,int offset,int limit);
     @Query("SELECT  new com.example.demo.Application.queries.get_all_products.GetAllProductsDTO(p.id,p.name, p.price, p.stock, u.username)"+
-        "FROM ProductEntity p JOIN p.user u "
+        "FROM ProductEntity p JOIN p.user u "+
+        "ORDER BY p.createdAt "+
+        "LIMIT :limit OFFSET :offset" 
     )
-    List<GetAllProductsDTO> findAllProductsSummary();
+    List<GetAllProductsDTO> findAllProductsSummary(int offset,int limit);
      @Query("SELECT  new com.example.demo.Application.queries.get_product_by_id.GetProductByIdDTO(p.id,p.price, p.name, p.description, u.username,p.createdAt,p.updatedAt)"+
         "FROM ProductEntity p JOIN p.user u "+
-        "WHERE p.id = :id "        
+        "WHERE p.id = :id "       
     )
     Optional<GetProductByIdDTO> findProductById(UUID id);
 

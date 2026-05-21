@@ -1,0 +1,64 @@
+name: CD - Promote & Deploy
+# ACCEPTS IN PAYLOAD IMAGE_NAME , IMAGE_TAG , ENVIRONMENT
+
+
+# Pull the image,promote the image , deploy to cloud
+
+# understand docker manifest inspect done 
+# Next 
+# TODO ADD ROLLBACK AND GREEN/BLUE DEPLOYHMENT not done
+# DEPLOYMENT TO AZURE AND ALSO MSG ON SLACK IN CASE FAILURE OR SUCCESS not done 
+on:
+    repository_dispatch:
+        types: [cd-pipeline-event]
+
+env:
+    REGISTRY: docker.io
+jobs:
+    slack-notification:
+        runs-on: ubuntu-latest
+        steps:
+            -   name: This job is for sending notif after the push to registry
+                uses: rtCamp/action-slack-notify@v2
+                env:
+                    SLACK_CHANNEL: general
+                    SLACK_COLOR: ${{ job.status }}
+                    SLACK_CUSTOM_PAYLOAD: '{"text":"🚀 Deployment waiting for approval for commit ${{ github.event.client_payload.sha }}"}'
+                    SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}     
+    promote-image:
+        needs: [slack-notification]
+        runs-on: ubuntu-latest
+        environment: ${{github.event.client_payload.ENVIRONMENT}}
+        steps:
+            -   name: Login in to docker
+                uses: docker/login-action@v3
+                with:
+                    username: ${{secrets.DOCKERUSERNAME}}
+                    password: ${{secrets.DOCKERPASSWORD}}            
+            -   name: Check the image  
+                run: docker manifest inspect ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}} || 1
+
+            -   name: Pull the image from docker registry 
+                if: success()
+                run: docker pull ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}}
+
+            -   name: Promote image to prod 
+                run: |
+                 docker tag ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}} ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:prod
+
+            -   name: Push the new image tag  to regitry 
+                run: docker push ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:prod
+    
+    # deploy-to-production:
+
+        # learn about Blue/Green deployment finsih from here
+# blue = current
+# green = new
+# switch traffic instantly
+    
+
+# host db on supabase
+# Next add the slack and rent virtual macjhine in azure and understand how to make blue/green
+# chatgpt https://chatgpt.com/c/6a0428c0-b724-83eb-b213-7c57a878c1be
+# Gemin https://gemini.google.com/app/ff4a6360b4eb7bae
+

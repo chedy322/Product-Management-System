@@ -1,0 +1,11 @@
+name: Setup java cache 
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven' # This automatically handles the ~/.m2 directory

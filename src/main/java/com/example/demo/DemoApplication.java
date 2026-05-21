@@ -6,15 +6,26 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class DemoApplication {
-
+  
 	public static void main(String[] args) {
-		// Load .env file
+	try {
         Dotenv dotenv = Dotenv.configure()
-        .directory("./shop")
-            .ignoreIfMalformed()
-            .load();
-        dotenv.entries().forEach(e -> System.setProperty(e.getKey(), e.getValue()));
-		SpringApplication.run(DemoApplication.class, args);
-	}
+                .directory("./shop")
+                .ignoreIfMissing()
+                .ignoreIfMalformed()
+                .load();
 
+        dotenv.entries().forEach(e ->
+            {
+            System.setProperty(e.getKey(), e.getValue());
+        } 
+    );
+    
+        SpringApplication.run(DemoApplication.class, args);
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+    
+	}
+    }
 }

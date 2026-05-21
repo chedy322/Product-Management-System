@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import com.example.demo.Domain.product.Entities.Product;
 import com.example.demo.Domain.product.ValueObjects.Name;
 import com.example.demo.Domain.product.ValueObjects.Stock;
-import com.example.demo.Domain.product.events.ProductCreated;
+import com.example.demo.Domain.product.events.ProductCreatedEvent;
 import com.example.demo.Domain.shared.Result;
 
 public class ProductTest {

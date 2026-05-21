@@ -66,6 +66,8 @@ public class RedisTokenBucketRateLimiter implements RateLimiter {
 
         // Make the checks 
         // Check how long has been since the last time the request was make 
+        //  evry 60000s -> 2 tokens
+        //  timepassed from the lastrefill-->?
         Long ellipseMs=time-lastRefillTime;
         Long tokensToAdd = (ellipseMs*REFILL_TOKENS)/REFILL_INTERVAL;
         // Min between the already available token and the max tokens 

@@ -6,7 +6,9 @@ import com.example.demo.Domain.Primitives.Entity;
 import com.example.demo.Domain.Primitives.Aggregate;
 import com.example.demo.Domain.product.ValueObjects.Name;
 import com.example.demo.Domain.product.ValueObjects.Stock;
-import com.example.demo.Domain.product.events.ProductCreated;
+import com.example.demo.Domain.product.events.ProductCreatedEvent;
+import com.example.demo.Domain.product.events.ProductDeletedEvent;
+import com.example.demo.Domain.product.events.ProductUpdatedEvent;
 import com.example.demo.Domain.shared.Result;
 
 public class Product extends Aggregate{
@@ -30,7 +32,7 @@ public class Product extends Aggregate{
      public static Result<Product> create (Name name,String description,int price,Stock stock,UUID ownerId){
         Product product=new Product(UUID.randomUUID(),name, description, price, stock,ownerId);
         // register event
-        product.registerEvent(new ProductCreated(product.getId(),product.getName()));
+        product.registerEvent(new ProductCreatedEvent(product.getId(),product.getName()));
         return Result.Success(product);
     }
        public static Result<Product> reconstruct(UUID id,Name name,String description,int price,Stock stock,UUID ownerId){
@@ -53,6 +55,8 @@ public class Product extends Aggregate{
             return Result.Failure(stockResult.getError());
         }
         this.stock=stockResult.getValue();
+        // register event product updated 
+        this.registerEvent(new ProductUpdatedEvent(super.getId()));
         return Result.Success(this.stock);
 
     }   
@@ -63,9 +67,14 @@ public class Product extends Aggregate{
             return Result.Failure(newName.getError());
         }
         this.name=newName.getValue();
+        this.registerEvent(new ProductUpdatedEvent(super.getId()));
         return Result.Success(this.name);
     }
     
+    public void deleteProduct(UUID productId){
+        // We can add some business logic in the future 
+        this.registerEvent(new ProductDeletedEvent(productId));
+    }
 
 
 

@@ -12,9 +12,12 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class GetAllProductsHandler {
-    private final ProductQueryService productQueryService;
+    private final ProductQueryService productQueryService;  
 
-    public Result<List<GetAllProductsDTO>> handle(){
-        return Result.Success(productQueryService.getProductsView());
+    public Result<List<GetAllProductsDTO>> handle(int page,int limit){
+        int page_number=Math.max(page, 1);
+        int limit_number=Math.min(limit,5);
+        int offset=(page_number-1)*limit_number;
+        return Result.Success(productQueryService.getProductsView(offset,limit_number));
     } 
 }

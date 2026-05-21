@@ -1,10 +1,6 @@
 services:
-  spring-api:
-    image: my-spring-app
-    depends_on:
-      postgres-db:
-        condition: service_healthy
-
+  spring-api-blue:
+    image: chedy2/my-spring-app-v3:prod
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,33 +8,42 @@ services:
       - backend
     ports:
       - 8080:8080
+    env_file:
+      - .env
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgree-db:5432/ProductDatabase
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - JWT_SECRET=${JWT_SECRET}
-    
-  postgres-db:
-    image: postgres:18-alpine
-    restart: always
+      - JAVA_OPTS=-Xmx400m -Xms250m -XX:+UseSerialGC
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: 750M
+        reservations:
+          memory: 250M
+  spring-api-green:
+    image: chedy2/my-spring-app-v2:prod
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     networks:
       - backend
+    ports:
+      - 8082:8080
+    env_file:
+      - .env
     environment:
-    - POSTGRES_USER=${DB_USERNAME}
-    - POSTGRES_PASSWORD=${DB_PASSWORD}
-    - POSTGRES_DB=ProductDatabase
-    volumes:
-      - db-data:/var/lib/postgresql
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - JAVA_OPTS=-Xmx400m -Xms250m -XX:+UseSerialGC
+    deploy:
+      resources:
+        limits:
+          cpus: '0.6'
+          memory: 750M
+        reservations:
+          memory: 250M
+    
 
 
+  
 networks:
   backend:
-    driver: bridge
-
-volumes:
-  db-data:
+    external: true
+    # driver: bridge

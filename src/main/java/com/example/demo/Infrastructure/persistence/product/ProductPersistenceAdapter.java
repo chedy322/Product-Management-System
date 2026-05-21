@@ -52,8 +52,8 @@ public class ProductPersistenceAdapter implements ProductRepository,GetUserProdu
 
     // Read
       @Override
-    public List<GetAllProductsDTO> getProductsView() {
-         List<GetAllProductsDTO> products=jpaProductRepository.findAllProductsSummary();
+    public List<GetAllProductsDTO> getProductsView(int offset,int limit) {
+         List<GetAllProductsDTO> products=jpaProductRepository.findAllProductsSummary(offset,limit);
         return products;
     }
     
@@ -92,8 +92,8 @@ public class ProductPersistenceAdapter implements ProductRepository,GetUserProdu
     }
 
     @Override
-    public List<GetUserProductsDTO> findProductsByUserId(UUID userId) {
-        return jpaProductRepository.findAllUserProductsSummary(userId);
+    public List<GetUserProductsDTO> findProductsByUserId(UUID userId,int offset,int limit) {
+        return jpaProductRepository.findAllUserProductsSummary(userId,offset,limit);
     }
    
 
