@@ -54,7 +54,7 @@ jobs:
         if: needs.changes.outputs.backend == 'true' && github.event_name != 'pull_request'
         uses: ./.github/workflows/reusable-docker-build-image.yml
         with:
-            IMAGE_NAME: "myspringapp"
+            IMAGE_NAME: "my-spring-app-v3"
             TARGET_ENV: Staging
         secrets: 
              DOCKER_USERNAME: ${{secrets.DOCKERUSERNAME}}
@@ -73,7 +73,7 @@ jobs:
                     event-type: cd-pipeline-event
                     client-payload: |
                         {
-                            "IMAGE_NAME": "myspringapp",
+                            "IMAGE_NAME": "my-spring-app-v3",
                             "IMAGE_TAG": "${{needs.build-deploy-image.outputs.image_tag}}",
                             "ENVIRONMENT": "Prod"
                         }

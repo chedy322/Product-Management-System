@@ -1,6 +1,6 @@
 services:
   spring-api-blue:
-    image: chedy2/my-spring-app-v3:prod
+    image: chedy2/my-spring-app-v3:${IMAGE_TAG:-prod}
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,7 +20,7 @@ services:
         reservations:
           memory: 250M
   spring-api-green:
-    image: chedy2/my-spring-app-v2:prod
+    image: chedy2/my-spring-app-v3:${IMAGE_TAG:-prod}
     # build:
     #   context: .
     #   dockerfile: Dockerfile
