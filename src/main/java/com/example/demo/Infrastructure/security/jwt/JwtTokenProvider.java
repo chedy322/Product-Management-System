@@ -13,6 +13,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import com.example.demo.Application.auth.dto.AccessTokenPayload;
 import com.example.demo.Application.auth.dto.JwtPayload;
 import com.example.demo.Application.auth.dto.RefreshTokenPayload;
 
@@ -65,6 +66,21 @@ public class JwtTokenProvider implements TokenProvider{
         refreshTokenId,
          refreshTokenData.getIssuedAt(),
           refreshTokenData.getExpiration());
+       }
+
+    @Override
+    public AccessTokenPayload AccessTokenDecodedPayload(String accessToken) {
+       Claims accessTokenData=extractAllClaims(accessToken);
+        String jtiString = accessTokenData.getId();
+        String subString = accessTokenData.getSubject();
+        
+        // 2. Convert Strings back to UUIDs
+        UUID accessTokenId = UUID.fromString(jtiString);
+        UUID userId = UUID.fromString(subString);
+       return AccessTokenPayload.map(userId, 
+        accessTokenId,
+         accessTokenData.getIssuedAt(),
+          accessTokenData.getExpiration());
     }
       private String createToken(Map<String, Object> claims, JwtPayload jwtTokenData) {
        return Jwts.builder()

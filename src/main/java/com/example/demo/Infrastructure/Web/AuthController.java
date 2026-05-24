@@ -109,12 +109,12 @@ public class AuthController {
 
     @PostMapping("/logout")
     
-    public ResponseEntity<Map<String,String>> logout(@AuthenticationPrincipal CustomUserDetails user,HttpServletResponse response) {
+    public ResponseEntity<Map<String,String>> logout(@CookieValue(required = false,name = "refreshToken")String refreshToken,@CookieValue(required = false,name = "accessToken")String accessToken,@AuthenticationPrincipal CustomUserDetails user,HttpServletResponse response) {
         
         if(user==null){
             return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
         }
-        Result<LogoutOutput> logoutResult=logoutUseCase.logout(user.getUserId());
+        Result<LogoutOutput> logoutResult=logoutUseCase.logout(user.getUserId(),accessToken,refreshToken);
         if(logoutResult.isFailure()){
               return ResponseEntity.status(logoutResult.getError().httpStatus()).body(Map.of("error",logoutResult.getError().errorMsg()));
         }
