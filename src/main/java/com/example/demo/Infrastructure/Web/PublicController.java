@@ -13,6 +13,6 @@ public class PublicController {
     @GetMapping("/main")
     public String homePage(Model model){
          model.addAttribute("message", "Welcome to our website!");
-        return "home";
+        return "home"; 
     }
 }

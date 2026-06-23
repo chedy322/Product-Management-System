@@ -1,15 +1,17 @@
 services:
   spring-api-blue:
-    image: chedy2/my-spring-app-v3:${IMAGE_TAG:-prod}
+    image: chedy2/my-spring-app-v5:${IMAGE_TAG:-prod}
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile  
     networks:
       - backend
     ports:
       - 8080:8080
     env_file:
       - .env
+    # dns:
+    #   - 8.8.8.8
     environment:
       - JAVA_OPTS=-Xmx400m -Xms250m -XX:+UseSerialGC
     deploy:
@@ -20,10 +22,7 @@ services:
         reservations:
           memory: 250M
   spring-api-green:
-    image: chedy2/my-spring-app-v3:${IMAGE_TAG:-prod}
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    image: chedy2/my-spring-app-v5:${IMAGE_TAG:-prod}
     networks:
       - backend
     ports:
@@ -39,11 +38,7 @@ services:
           memory: 750M
         reservations:
           memory: 250M
-    
 
-
-  
 networks:
   backend:
-    external: true
-    # driver: bridge
+    driver: bridge

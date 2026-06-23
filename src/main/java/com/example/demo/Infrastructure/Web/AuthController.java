@@ -112,7 +112,7 @@ public class AuthController {
     public ResponseEntity<Map<String,String>> logout(@CookieValue(required = false,name = "refreshToken")String refreshToken,@CookieValue(required = false,name = "accessToken")String accessToken,@AuthenticationPrincipal CustomUserDetails user,HttpServletResponse response) {
         
         if(user==null){
-            return ResponseEntity.status(401).body(Map.of("error", "Not authenticated"));
+            return ResponseEntity.status(401).body(Map.of("error", "User is not authenticated"));
         }
         Result<LogoutOutput> logoutResult=logoutUseCase.logout(user.getUserId(),accessToken,refreshToken);
         if(logoutResult.isFailure()){

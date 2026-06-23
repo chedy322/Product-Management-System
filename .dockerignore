@@ -4,4 +4,4 @@
 *.log
 /test
 *.txt
-applicationinsights.json
+# applicationinsights.json

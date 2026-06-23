@@ -4,16 +4,22 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 
 @AllArgsConstructor
+@NoArgsConstructor(force = true)
 public class CustomUserDetails implements UserDetails {
     private final UUID userId;
     private final Collection<? extends GrantedAuthority> authorities;
+    @Nullable
     private final String password;
     private final String username;
     private final String email;
@@ -25,10 +31,13 @@ public class CustomUserDetails implements UserDetails {
     public UUID getUserId(){ return userId;}
     public String getUserEmail(){ return email;}
     @Override
+    @JsonDeserialize(contentAs = SimpleGrantedAuthority.class)
     public Collection<? extends GrantedAuthority> getAuthorities(){return authorities;}
 
     @Override
-   public String getPassword(){return password;};
+    @Nullable
+   public String getPassword(){
+    return password;};
 
     @Override
    public String getUsername(){

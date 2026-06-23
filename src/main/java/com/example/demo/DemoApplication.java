@@ -6,7 +6,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 @SpringBootApplication
 public class DemoApplication {
-  
+    
 	public static void main(String[] args) {
 	try {
         Dotenv dotenv = Dotenv.configure()
@@ -14,12 +14,13 @@ public class DemoApplication {
                 .ignoreIfMissing()
                 .ignoreIfMalformed()
                 .load();
-
-        dotenv.entries().forEach(e ->
-            {
+ 
+        dotenv.entries().forEach(e -> 
+            { 
+            System.out.println(e.getValue());
             System.setProperty(e.getKey(), e.getValue());
         } 
-    );
+    );  
     
         SpringApplication.run(DemoApplication.class, args);
         

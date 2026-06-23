@@ -41,8 +41,8 @@ public class RefreshTokenUseCase {
         if(existingUser.isEmpty()){
             return Result.Failure(Error.UNAUTHORIZED("Invalid session or user. Please log in again."));
         }
-        // 4.Check if the refreshToken is blacklisted
-        boolean tokenBlackListedStatus=tokensBlackList.getBlacksListedTokenbyId(refreshTokenId);
+        // 4.Check if the refreshToken is blacklisted(I changed here to string from Id)
+        boolean tokenBlackListedStatus=tokensBlackList.getBlacksListedTokenbyId(oldRefreshToken);
         if(!tokenBlackListedStatus){
             // Security Alert Event send email 
             // delete all tokens 
@@ -60,7 +60,12 @@ public class RefreshTokenUseCase {
         // 5. invalidate the previous refresh token
         refreshTokenRepository.deleteById(refreshTokenId);
         // Blacklist the used refresh token
-        tokensBlackList.addtBlackListedToken(refreshTokenId);
+        // extract the remaining time for the old refreshtoken 
+        long oldRefreshTokenExpiresAt=refreshTokenPayload.expireAt().getTime();
+        long now=new Date().getTime();
+        long remainingTimeForOldRefreshToken=now-oldRefreshTokenExpiresAt;
+        // I changed this part from String to Id
+        tokensBlackList.addtBlackListedToken(oldRefreshToken,remainingTimeForOldRefreshToken);
         // 6. generate the new refrehsToken domain entity time and id
         Date currentDate=new Date();
         Date expiresAt=new Date(currentDate.getTime()+(7L * 24 * 60 * 60 * 1000));

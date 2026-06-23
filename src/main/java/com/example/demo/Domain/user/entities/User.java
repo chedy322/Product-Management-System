@@ -1,13 +1,18 @@
 package com.example.demo.Domain.user.entities;
 
-import com.example.demo.Infrastructure.config.Enum.UserRole;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.example.demo.Domain.Primitives.Aggregate;
 import com.example.demo.Domain.shared.Error;
 import com.example.demo.Domain.shared.Result;
+import com.example.demo.Domain.user.events.UserAuthorizationChanged;
 import com.example.demo.Domain.user.events.UserCreated;
+import com.example.demo.Domain.user.events.UserDeleted;
+import com.example.demo.Domain.user.events.UserPasswordChanged;
+import com.example.demo.Domain.user.events.UserProfileChanged;
+import com.example.demo.Infrastructure.config.Enum.UserRole;
 
 public class User extends Aggregate{ 
     private String username;
@@ -49,38 +54,65 @@ public class User extends Aggregate{
         if (newEmail == null || !newEmail.contains("@")) {
             return Result.Failure(Error.VALIDATION_ERROR("Invalid email format"));
         }
+        if(newEmail.equals(this.email)){
+             return Result.Success(false);
+        }
         this.email = newEmail;
         this.updatedAt = LocalDateTime.now();
+        // store userProfileCHanged event
+        this.registerEvent(new UserProfileChanged(this.getId()));
         return Result.Success(true);
     }
 // change username
-    public void changeUsername(String username){
+    public Result<Boolean> changeUsername(String username){
+        if(username.equals(this.username)){
+            return Result.Success(false);
+        }
         this.username=username;
         this.updatedAt=LocalDateTime.now();
+        this.registerEvent(new UserProfileChanged(this.getId()));
+        return Result.Success(true);
     }
 // change password
 // change this in future to value object with validation 
     public void changePassword(String password){
+        // Make check for password
+
         this.password=password;
         this.updatedAt=LocalDateTime.now();
+        this.registerEvent(new UserPasswordChanged(this.email,this.getId()));
     }
 
 // change role
-    public void ChangeRole(UserRole userRole){
+// Additionally, there is no validation on who can change roles or if the role is actually changing.
+//  If a user is already a USER and you call ChangeRole(UserRole.USER),
+//  you will prematurely update updatedAt and fire an unnecessary cache eviction event.
+    public Result<Boolean> ChangeRole(UserRole userRole){
+        if (userRole.equals(this.role)){
+            return Result.Success(false);
+        }
         this.role=userRole;
         this.updatedAt=LocalDateTime.now();
+        this.registerEvent(new UserAuthorizationChanged(this.getId()));
+        return Result.Success(true);
     }
 
 // change blocked
+//This function is implimented but later i would need to ad the event here 
     public void block(Boolean blockStatus) {
         this.blocked = blockStatus;
         this.updatedAt = LocalDateTime.now();
+      
+    }
+    public void deletedUser(){
+        this.registerEvent(new UserDeleted(this.email, this.getId()));
     }
 
-    public void promoteToAdmin() {
-        this.role = UserRole.ADMIN;
-        this.updatedAt = LocalDateTime.now();
-    }
+    // public void promoteToAdmin() {
+    //     this.role = UserRole.ADMIN;
+    //     this.updatedAt = LocalDateTime.now();
+    //     this.registerEvent(new UserAuthorizationChanged(this.getId()));
+    // }
 
     // --- GETTERS ---
 

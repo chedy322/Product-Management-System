@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 
 import com.example.demo.Domain.Interfaces.RateLimiter;
 // ISSUE IN THIS FLOW CONCURRENRY
-@Component
+@Component 
 public class RedisTokenBucketRateLimiter implements RateLimiter {
-    private static final long MAX_TOKENS=5;
+    private static final long MAX_TOKENS=100;
     private static final long REFILL_INTERVAL=60000;
-    private static final long REFILL_TOKENS=2;
+    private static final long REFILL_TOKENS=10;
    private final StringRedisTemplate redisTemplate;
 
     public RedisTokenBucketRateLimiter(StringRedisTemplate redisTemplate) {

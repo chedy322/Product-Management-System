@@ -47,7 +47,7 @@ public class RedisProductQueryServiceCache implements ProductQueryService,GetUse
         Optional<GetProductByIdDTO> productDataById=productPersistenceAdapter.getProductViewById(id);
         // 3. Store the data in the cache if present
         productDataById.ifPresent(dto->{
-            try{
+            try{ 
                 redisTemplate.opsForValue().set(key, dto,Duration.ofMinutes(10));
                  log.debug("Saved list to Redis key={} TTL=10m", key);
             }catch(Exception e){
@@ -73,7 +73,7 @@ public class RedisProductQueryServiceCache implements ProductQueryService,GetUse
             }
             log.debug("Cache Miss for key={}",key);
         }catch(Exception e){
-            log.debug("Failed to save to Redis: {}", e.getMessage());
+            log.warn("Failed to save to Redis: {}", e.getMessage());
         }
         // 3. Cache miss hit the db
         List<GetAllProductsDTO> productData=productPersistenceAdapter.getProductsView(offset, limit);

@@ -1,6 +1,7 @@
 package com.example.demo.Infrastructure.Web;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.StreamSupport;
@@ -103,7 +104,7 @@ public class ProductController extends ApiController{
             // return ResponseEntity.status(error.httpStatus()).body(error.errorMsg());
             throw new DomainExceptions(error);
         }
-        return ResponseEntity.status(201).body("Product deleted successfully");
+        return ResponseEntity.status(201).body(Map.of("Message","Product deleted successfully"));
     }
 
     @PatchMapping("/{id}")

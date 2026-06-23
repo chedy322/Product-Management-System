@@ -18,6 +18,8 @@ import com.example.demo.Infrastructure.config.Enum.UserRole;
 
 
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import com.example.demo.Domain.Interfaces.DomainEventPublisher;
 import com.example.demo.Domain.refreshToken.interfaces.RefreshTokenRepository;
@@ -26,13 +28,12 @@ import com.example.demo.Domain.shared.Result;
 
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    public UserService(UserRepository userRepository,RefreshTokenRepository refreshTokenRepository){
-        this.userRepository=userRepository;
-        this.refreshTokenRepository=refreshTokenRepository;
-    }
+    private final DomainEventPublisher domainEventPublisher;
 
     // thse methods are for ADMIN 
        public Result<List<User>> findAll(){
@@ -74,6 +75,8 @@ public class UserService {
         // 3. change the status and save to db
         existingUserData.ChangeRole(upgradedRole);
         userRepository.save(existingUserData);
+        // 4. dispatch the event on role changed
+        domainEventPublisher.dispatch(existingUserData);
         // 4. Invalidate all refreshTokens from db for security
         refreshTokenRepository.deleteByUserId(userToUpgradeId);
         return Result.Success(true);
@@ -82,6 +85,7 @@ public class UserService {
     }
 
     // this method is for ADMIN and USER
+    // Fix returning type to DTO
     @Transactional
     public Result<User> updateUser(UUID userId,UpdateUserRequest userRequest){
         // 1. check if user exists in db
@@ -92,23 +96,31 @@ public class UserService {
         // 2. get User entity
         User user=existingUser.get();
         // 3. update based on fields existing
-        if(userRequest.email()!=null){
-            user.changeEmail(userRequest.email());
-        }
-        if(userRequest.password()!=null){
-            user.changePassword(userRequest.password());
-        }
-        if(userRequest.username()!=null){
-            user.changeUsername(userRequest.username());
-        }
+            Result<Boolean> userEmailChangeResponse=user.changeEmail(userRequest.email());
+            if(userEmailChangeResponse.isFailure()){
+                return Result.Failure(userEmailChangeResponse.getError());
+            }
         
-        // 4. save changes to db
-        userRepository.save(user);
-       
+            Result<Boolean> userUsernameChangeResponse=user.changeUsername(userRequest.username());
+            if(userUsernameChangeResponse.isFailure()){
+                 return Result.Failure(userUsernameChangeResponse.getError());
+            }
+        
+        Boolean wasMutated=userUsernameChangeResponse.getValue() || userEmailChangeResponse.getValue();
+        if(wasMutated){
+            // 4. publish the registered events
+            domainEventPublisher.dispatch(user);
+            // 5. save changes to db
+            userRepository.save(user);
+        }else{
+            log.info("User with id={} made profile update requested, but data was identical. Safely ignoring database rewrite.",user.getId());
+        }
+
         return Result.Success(user);
 
 
     }
+    // add change password as it s more secure implimentation needed
 
     // public booelan findCurrentUserData()
 }

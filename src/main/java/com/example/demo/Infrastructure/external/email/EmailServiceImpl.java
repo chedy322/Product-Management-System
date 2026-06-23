@@ -21,7 +21,7 @@ public class EmailServiceImpl implements EmailService {
 
     // Method 1
     // To send a simple email
-    public void sendSimpleMail(String details)
+    public void sendSimpleMail(String email,String details)
     {
 
         // Try block to check for exceptions
@@ -32,10 +32,10 @@ public class EmailServiceImpl implements EmailService {
                 = new SimpleMailMessage();
 
             // Setting up necessary details
-            mailMessage.setFrom(sender);
-            mailMessage.setTo("chbouountito@gmail.com");
+            mailMessage.setFrom("chbouountito@gmail.com");
+            mailMessage.setTo(sender);
             mailMessage.setText(details);
-            mailMessage.setSubject("Test");
+            mailMessage.setSubject("PLEASE DO NOT REPLY TO THIS EMAIL");
 
             // Sending the mail
             javaMailSender.send(mailMessage);
@@ -44,7 +44,7 @@ public class EmailServiceImpl implements EmailService {
 
         // Catch block to handle the exceptions
         catch (Exception e) {
-            log.warn( "Error while Sending Mail");
+            log.warn( "Error happened while Sending Mail");
         }
     }
 

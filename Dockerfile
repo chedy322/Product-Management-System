@@ -15,10 +15,10 @@ RUN addgroup -S groupuser && adduser -G groupuser -S myuser -D
 WORKDIR /app
 COPY --from=build --chown=myuser:groupuser /app/target/*.jar app.jar
 # change to non root user
-USER myuser
 
-COPY applicationinsights-agent-3.7.8.jar /app/agent.jar
-COPY applicationinsights.json /app/applicationinsights.json
+COPY --chown=myuser:groupuser ./applicationinsights-agent-3.7.8.jar /app/agent.jar
+COPY --chown=myuser:groupuser ./applicationinsights.json /app/applicationinsights.json
+USER myuser
 EXPOSE 8080
 # ENTRYPOINT ["java", "-jar", "app.jar"]
 CMD [ "java","-javaagent:/app/agent.jar","-jar","app.jar" ]

@@ -70,9 +70,9 @@ public class AdminController extends ApiController{
     // Change selected user role
     @PatchMapping("/users/{userId}/role")
     public ResponseEntity<Map<String,String>> changeRoleStatus(@PathVariable UUID userId,@RequestBody RequestChangeRoleStatus newUserRole ,HttpServletResponse response) {
-    
-          return UserRole.map(newUserRole.newUserRole()).map(
+        return UserRole.map(newUserRole.newUserRole()).map(
             role->{
+
                 Result<Boolean> changeUserStatusResult=userService.changeRoleStatus(userId, role);
                 if(changeUserStatusResult.isFailure()){
                     Error error=changeUserStatusResult.getError();

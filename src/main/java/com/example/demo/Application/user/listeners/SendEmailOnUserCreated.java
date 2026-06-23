@@ -17,7 +17,7 @@ public class SendEmailOnUserCreated {
     @Async
     @EventListener
     public void handle(UserCreated event){
-        emailService.sendSimpleMail(String.format("Welcome to your Entreprise shop management ", event.username()));
+        emailService.sendSimpleMail(event.email(),String.format("Welcome to your Entreprise shop management ", event.username()));
     }
 
 
