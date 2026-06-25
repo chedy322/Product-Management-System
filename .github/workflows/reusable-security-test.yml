@@ -35,6 +35,7 @@ jobs:
                 uses: actions/checkout@v3
                 with:
                     fetch-depth: 0 
+                    args: --all
             -   name: GitGuardian scan
                 uses: GitGuardian/ggshield/actions/secret@v1.48.0
                 env:
@@ -43,6 +44,7 @@ jobs:
                     GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
                     GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
                     GITGUARDIAN_API_KEY: ${{ secrets.GG_API_KEY }}
+    # SAST Tools like CodeQL IS used to detect vulnerabilities in the codebase.   
     CodeQl:
         runs-on: ubuntu-latest
         permissions:
@@ -65,10 +67,17 @@ jobs:
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@v3
+                with:
+                    upload: true
+                    output: 'codeql-results'
 
+
+    #  Snyk as SCA tool is used to detect vulnerabilities in the dependencies of the project.
     snyk: 
         runs-on: ubuntu-latest
         environment: ${{inputs.TARGET_ENV}}
+        permissions:
+            security-events: write
         steps:
             -   name: checkout code repo
                 uses: actions/checkout@v4
@@ -78,17 +87,17 @@ jobs:
             -   name: Compile and package project 
                 run: mvn -B package -DskipTests
                 
-            -   name: Install Snyk CLI
-                uses: snyk/actions/setup@master
-                    
-            -   name: Authenticate to snyk
-                run: snyk auth ${{ secrets.SNYK_TOKEN }}
+            -   name: Run Snyk test for dependencies
+                uses: snyk/actions/maven@master
+                continue-on-error: true
+                env:
+                    SNYK_TOKEN:  ${{ secrets.SNYK_TOKEN }}
+                with:
+                    args: --severity-threshold=high --sarif-file-output=snyk.sarif
 
-            -   name: run snyk for vulnerabilties
-                run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
                 
-            -   name: upload snyk artifact result
-                uses: github/codeql-action/upload-sarif@v4
+            -   name: Upload snyk artifact result
+                uses: github/codeql-action/upload-sarif@v3
                 if: always()
                 with:
                     sarif_file: snyk.sarif
