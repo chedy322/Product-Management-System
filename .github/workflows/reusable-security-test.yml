@@ -3,8 +3,7 @@
 # Run Snyk for packages vulnarbites 
 
 name: Security test 
-# TODO ADD THE BUILDONCE ARTIFACT finish from colpiloi in bar 
-# ADD OTHER FILES ARCHITECTURE AND CREATE EVENT DRIVEN pipilens
+
 on:
     workflow_call:
         inputs:
