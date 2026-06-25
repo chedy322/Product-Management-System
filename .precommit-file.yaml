@@ -1,0 +1,17 @@
+repos:
+  # 1. Standardize basic code cleanliness first
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+
+  # 2. The Security Gate: Gitleaks for Secret Scanning
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.2
+    hooks:
+      - id: gitleaks-system
+        name: Gitleaks (Local Secret Scanner)
+        entry: gitleaks protect --verbose --redact --staged
