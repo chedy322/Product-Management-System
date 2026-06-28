@@ -69,7 +69,7 @@ jobs:
                 uses: peter-evans/repository-dispatch@v3
                 with:
                     token: ${{ secrets.MY_PAT }}
-                    repository: owner/repo-b
+                    repository: chedy322/Product-Management-System
                     event-type: cd-pipeline-event
                     client-payload: |
                         {

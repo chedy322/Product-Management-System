@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.0
+    hooks:
+      - id: gitleaks
+        name: Gitleaks
+        description: Detect secrets in your code
+        entry: gitleaks detect --verbose --redact
+        language: golang 
+        stages: [commit]
+
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect secrets
+        description: Detects *approximate* secrets in your code
+        entry: detect-secrets scan
+        language: python
+        types: [python]
+

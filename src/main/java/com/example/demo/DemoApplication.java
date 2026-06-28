@@ -20,7 +20,7 @@ public class DemoApplication {
             System.out.println(e.getValue());
             System.setProperty(e.getKey(), e.getValue());
         } 
-    );  
+    );   
     
         SpringApplication.run(DemoApplication.class, args);
         
