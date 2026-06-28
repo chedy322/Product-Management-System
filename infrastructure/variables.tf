@@ -1,5 +1,5 @@
 variable "ssh_key_path"{
     description = "Path to the SSH public key file"
     type        = string
-    default     = "c:\\Users\\chedi\\Downloads\\product-entreprise-server_key.pem"
+    default     = "C:\\Users\\chedi\\Desktop\\allFolders\\myProjects\\productProject\\id_rsa.pub"
 }

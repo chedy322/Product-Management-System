@@ -39,3 +39,17 @@ logs/
 *.txt
 applicationinsights-agent-*.jar
 applicationinsights.json
+
+# Local .terraform directories
+**/.terraform/*
+/.terraform/*
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json

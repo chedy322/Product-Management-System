@@ -1,6 +1,5 @@
 resource "azurerm_resource_group" "rg" {
   name     = "product-entreprise-student-rg"
-  //Change this to india region
   location = "Central India"
 }
 
@@ -29,6 +28,7 @@ resource "azurerm_public_ip" "public_ip" {
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku= "Standard"
+  domain_name_label= "product-entreprise-student-public-ip"
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -74,7 +74,26 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }
 }
 
-outputs "public_ip_address" {
+output "public_ip_address" {
   value =azurerm_public_ip.public_ip.ip_address
 }
-# TODO: Delete the static public ip adress once the vm is stopped to avoid unnecessary costs
+
+# Add Auto shutdown to avoid unnecessary costs
+
+resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
+  virtual_machine_id = azurerm_linux_virtual_machine.vm.id
+  location           = azurerm_resource_group.rg.location
+  enabled            = true
+
+  daily_recurrence_time = "0300"
+  timezone              = "E. Europe Standard Time"
+
+  notification_settings {
+    enabled         = true
+    email= "chbouountito@gmail.com"
+  }
+}
+# Deaasociate the public ip address which is associated with the vm to avoid unnecessary costs
+
+# Delete the Static ip address once the vm is stopped to avoid unnecessary costs
+
