@@ -1,4 +1,4 @@
 # Ignore Application Insights false positive
 5dfd0845f0516fb5054132dae33df19629cb9d4d:applicationinsights.json:generic-api-key:2
 # Ignore local jwt.secret false positive
-732176307b14b64872707c362310229ecbdb870d:src/main/resources/application.properties:generic-api-key:15
+732176307b14b64872707c362310229ecbdb870d:src/main/resources/application.properties:generic-api-key:15 

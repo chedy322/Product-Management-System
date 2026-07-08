@@ -46,6 +46,7 @@ applicationinsights.json
 # .tfstate files
 *.tfstate
 *.tfstate.*
+*.tfvars
 
 crash.log
 crash.*.log

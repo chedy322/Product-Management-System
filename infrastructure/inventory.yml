@@ -1,0 +1,4 @@
+app_Server:
+  hosts:
+    sandbox:
+      ansible_connection: docker

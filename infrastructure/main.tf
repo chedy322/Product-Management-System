@@ -13,11 +13,11 @@ resource "azurerm_virtual_network" "vnet" {
 
 
 # Configure the subnet to let the virtual network know about the subnet which lets the vm to communicate with the outside world
-resource "azurerm_subnet" "subnet"{
+resource "azurerm_subnet" "app_subnet"{
   name                 = "product-entreprise-student-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  # Ip range with 24 bits to hosts NGinx and VM 
+  # Ip range with 24 bits 
   address_prefixes     = ["10.0.2.0/24"]
 }
 
@@ -38,7 +38,7 @@ resource "azurerm_network_interface" "nic" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet.id
+    subnet_id                     = azurerm_subnet.app_subnet.id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.public_ip.id
   }
@@ -93,7 +93,51 @@ resource "azurerm_dev_test_global_vm_shutdown_schedule" "auto_shutdown" {
     email= "chbouountito@gmail.com"
   }
 }
-# Deaasociate the public ip address which is associated with the vm to avoid unnecessary costs
 
-# Delete the Static ip address once the vm is stopped to avoid unnecessary costs
+
+# Set up firewall secuirty rule (deny all traffic except for SSH(resctricted to my ip address) and HTTP)
+resource "azurerm_network_security_group" "nsg"{
+  name                = "product-entreprise-student-nsg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+  security_rule {
+    name                       = "SSH"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "22"
+    source_address_prefix      = file(var.my_ip_address)
+    destination_address_prefix = "*"
+  }
+  security_rule{
+    name="HTTP"
+    priority                   = 101
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+  security_rule{
+    name="HTTPS"
+    priority                   = 102
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+# Attach the firewall to the subnet
+resource "azurerm_subnet_network_security_group_association" "subnet_nsg_association" {
+  subnet_id                 = azurerm_subnet.app_subnet.id
+  network_security_group_id = azurerm_network_security_group.nsg.id
+}
 
