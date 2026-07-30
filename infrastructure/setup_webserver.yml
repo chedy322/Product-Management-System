@@ -1,8 +1,0 @@
-name: Product app configuration setup
-hosts: app_Server
-become: true
-# IInstall nginx docker compose and configure nginx
-tasks:
-  - name: Install docker compose
-    ansible.builtin.shell: |
-      curl -L " 

@@ -1,4 +1,8 @@
 name: This workflow is reponsible for continous integration
+# FIX THE LEAKS NOW
+# CHECK THE SECURITY TEST AND WHERE I HOST THEM
+# CHECK THE REST OF THE WORKFLOW AND MAKE SURE THEY ARE WORKING
+# https://gemini.google.com/app/59594df8854f1003
 on:
     push:
         branches: [main]

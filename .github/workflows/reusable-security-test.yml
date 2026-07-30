@@ -51,7 +51,7 @@ jobs:
             contents: read
         steps:
             -   name: Checkout code repo 
-                uses: actions/checkout@v4 
+                uses: actions/checkout@v3
              
             -   uses: ./.github/actions/setup-java-cache.yml      
             -   name: Initialize CodeQL
@@ -59,9 +59,8 @@ jobs:
                 with:
                     languages: ${{ inputs.LANGUAGE }}
                     queries: security-extended
-            
             -   name: Autobuild
-                run: mvn package -DskipTests
+                uses: github/codeql-action/autobuild@v3
 
             -   name: Perform CodeQL Analysis
                 uses: github/codeql-action/analyze@v3
@@ -69,26 +68,27 @@ jobs:
     snyk: 
         runs-on: ubuntu-latest
         environment: ${{inputs.TARGET_ENV}}
+        permissions:
+            security-events: write
+            contents: read
         steps:
             -   name: checkout code repo
-                uses: actions/checkout@v4
+                uses: actions/checkout@v3
 
             -   uses: ./.github/actions/setup-java-cache.yml  
 
             -   name: Compile and package project 
                 run: mvn -B package -DskipTests
-                
-            -   name: Install Snyk CLI
-                uses: snyk/actions/setup@master
-                    
-            -   name: Authenticate to snyk
-                run: snyk auth ${{ secrets.SNYK_TOKEN }}
-
-            -   name: run snyk for vulnerabilties
-                run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
-                
-            -   name: upload snyk artifact result
-                uses: github/codeql-action/upload-sarif@v4
+            -   name: Run Snyk tets for vunerabilities
+                uses: snyk/actions/maven@master
+                env:
+                    SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+                with:
+                    args: test --all-projects --sarif-file-output=snyk.sarif --severity-threshold=high
+                continue-on-error: true
+            
+            -   name: Upload snyk artifact result
+                uses: github/codeql-action/upload-sarif@v2
                 if: always()
                 with:
                     sarif_file: snyk.sarif

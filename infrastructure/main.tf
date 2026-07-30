@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "rg" {
-  name     = "product-entreprise-student-rg"
-  location = "Central India"
+  name     = var.resource_group_name
+  location = var.location
 }
 
 
@@ -49,7 +49,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                = "product-entreprise-student-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_B2ats_v2"
+  size                = var.vm_size
   admin_username      = "azureadminstudent"
   network_interface_ids = [
     azurerm_network_interface.nic.id,
@@ -108,7 +108,7 @@ resource "azurerm_network_security_group" "nsg"{
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = file(var.my_ip_address)
+    source_address_prefix      = var.my_ip_address
     destination_address_prefix = "*"
   }
   security_rule{

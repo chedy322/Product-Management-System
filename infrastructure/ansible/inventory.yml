@@ -1,0 +1,6 @@
+app_Server:
+  hosts:
+    sandbox:
+      ansible_host: 40.80.90.9
+      ansible_user: azureadminstudent
+      ansible_ssh_private_key_file: ~/.ssh/azure_sandbox_key
