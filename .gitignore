@@ -31,3 +31,25 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore all log files
+*.log
+logs/
+.env
+*.txt
+applicationinsights-agent-*.jar
+applicationinsights.json
+
+# Local .terraform directories
+**/.terraform/*
+/.terraform/*
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json

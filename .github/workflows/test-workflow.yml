@@ -1,0 +1,58 @@
+name: Test workflow
+
+on:
+  workflow_call:
+    inputs: 
+      java:
+        type: string
+        required: true
+        default: "25"
+      os:
+        type: string
+        required: true
+        default: ubuntu-latest
+
+  
+
+jobs:
+    test:
+        name: Run tests
+        environment: CI/CD
+        runs-on: ${{inputs.os}}
+        steps:
+
+        -   name: Checkout code
+            uses: actions/checkout@v4
+
+        -   name: Set up JDK ${{inputs.java}} 
+            uses: actions/setup-java@v4
+            with:
+                java-version: ${{inputs.java}}
+                distribution: 'temurin'
+                cache: maven
+
+        -   name: Run tests
+            run: mvn verify
+            env:
+                JWT_SECRET: ${{ secrets.JWT_SECRET }}
+                GMAIL_USERNAME: ${{secrets.GMAIL_USERNAME}}
+                GMAIL_PASSWORD: ${{ secrets.GMAIL_PASSWORD}}
+
+
+            # upload the xml file
+        -   name: Upload Test Report
+            uses: actions/upload-artifact@v4
+            if: always()
+            with:
+                name: junit-reports-xml-${{inputs.os}} ${{inputs.java}}
+                path: target/surefire-reports/
+
+        # upload the html file stats
+        -   name: Upload Test Report
+            uses: actions/upload-artifact@v4
+            if: always()
+            with:
+                name: junit-reports-html-${{inputs.os}} ${{inputs.java}}
+                path: target/reports/surefire.html
+      
+

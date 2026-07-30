@@ -1,0 +1,101 @@
+# Run GitGuardian
+# Run codeql for CVEs like sSQL INJECTION,XSS,etc...
+# Run Snyk for packages vulnarbites 
+
+name: Security test 
+# TODO ADD THE BUILDONCE ARTIFACT finish from colpiloi in bar 
+# ADD OTHER FILES ARCHITECTURE AND CREATE EVENT DRIVEN pipilens
+on:
+    workflow_call:
+        inputs:
+            LANGUAGE:
+                type: string
+                description: The language used during the development of the software
+                default: java
+            TARGET_ENV:
+                type: string 
+                required:  true
+        secrets:
+            GG_API_KEY:
+                required: true 
+            SNYK_TOKEN:
+                required: true
+                
+
+env: 
+    JAVA_VERSION: 25
+
+jobs:
+    gitGuardian:
+        name: GitGuardian scan
+        environment: ${{inputs.TARGET_ENV}}
+        runs-on: ubuntu-latest
+        steps:
+            -   name: Checkout
+                uses: actions/checkout@v3
+                with:
+                    fetch-depth: 0 
+            -   name: GitGuardian scan
+                uses: GitGuardian/ggshield/actions/secret@v1.48.0
+                env:
+                    GITHUB_PUSH_BEFORE_SHA: ${{ github.event.before }}
+                    GITHUB_PUSH_BASE_SHA: ${{ github.event.base }}
+                    GITHUB_PULL_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+                    GITHUB_DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+                    GITGUARDIAN_API_KEY: ${{ secrets.GG_API_KEY }}
+    CodeQl:
+        runs-on: ubuntu-latest
+        permissions:
+            security-events: write
+            actions: read
+            contents: read
+        steps:
+            -   name: Checkout code repo 
+                uses: actions/checkout@v4 
+             
+            -   uses: ./.github/actions/setup-java-cache.yml      
+            -   name: Initialize CodeQL
+                uses: github/codeql-action/init@v3
+                with:
+                    languages: ${{ inputs.LANGUAGE }}
+                    queries: security-extended
+            
+            -   name: Autobuild
+                run: mvn package -DskipTests
+
+            -   name: Perform CodeQL Analysis
+                uses: github/codeql-action/analyze@v3
+
+    snyk: 
+        runs-on: ubuntu-latest
+        environment: ${{inputs.TARGET_ENV}}
+        steps:
+            -   name: checkout code repo
+                uses: actions/checkout@v4
+
+            -   uses: ./.github/actions/setup-java-cache.yml  
+
+            -   name: Compile and package project 
+                run: mvn -B package -DskipTests
+                
+            -   name: Install Snyk CLI
+                uses: snyk/actions/setup@master
+                    
+            -   name: Authenticate to snyk
+                run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+            -   name: run snyk for vulnerabilties
+                run: snyk test --sarif-file-output=snyk.sarif --severity-threshold=high
+                
+            -   name: upload snyk artifact result
+                uses: github/codeql-action/upload-sarif@v4
+                if: always()
+                with:
+                    sarif_file: snyk.sarif
+            
+            
+            
+
+
+
+    

@@ -1,0 +1,121 @@
+name: CD - Promote & Deploy
+# ACCEPTS IN PAYLOAD IMAGE_NAME , IMAGE_TAG , ENVIRONMENT
+
+# Pull the image,promote the image , deploy to cloud
+ 
+# Next 
+# TODO ADD ROLLBACK AND GREEN/BLUE DEPLOYHMENT not done
+# DEPLOYMENT TO AZURE AND ALSO MSG ON SLACK IN CASE FAILURE OR SUCCESS not done 
+on:
+    repository_dispatch:
+        types: [cd-pipeline-event]
+
+env:
+    REGISTRY: docker.io
+jobs:
+    # slack-notification:
+    #     runs-on: ubuntu-latest
+    #     steps:
+    #         -   name: This job is for sending notif after the push to registry
+    #             uses: rtCamp/action-slack-notify@v2
+    #             env:
+    #                 SLACK_CHANNEL: general
+    #                 SLACK_COLOR: ${{ job.status }}
+    #                 SLACK_CUSTOM_PAYLOAD: '{"text":"🚀 Deployment waiting for approval for commit ${{ github.event.client_payload.sha }}"}'
+    #                 SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}     
+    promote-image:
+        # needs: [slack-notification]
+        runs-on: ubuntu-latest
+        environment: ${{github.event.client_payload.ENVIRONMENT}}
+        steps:
+            -   name: Login in to docker
+                uses: docker/login-action@v3
+                with:
+                    username: ${{secrets.DOCKERUSERNAME}}
+                    password: ${{secrets.DOCKERPASSWORD}}            
+            -   name: Check the image  
+                run: docker manifest inspect ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}}
+
+            -   name: Pull the image from docker registry 
+                if: success()
+                run: docker pull ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}}
+
+            -   name: Promote image to prod 
+                run: |
+                 docker tag ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:${{github.event.client_payload.IMAGE_TAG}} ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:prod
+
+            -   name: Push the new image tag  to regitry 
+                run: docker push ${{env.REGISTRY}}/${{secrets.DOCKERUSERNAME}}/${{github.event.client_payload.IMAGE_NAME}}:prod
+    
+    deploy-to-production:
+        needs: [promote-image]
+        runs-on: ubuntu-latest
+        environment: ${{github.event.client_payload.ENVIRONMENT}}
+        steps:
+            -   name: SSH into Azure VM & Deploy
+                uses: appleboy/ssh-action@v1.0.3
+                with:
+                    host: ${{ secrets.VM_IP }}
+                    username: azureuser
+                    key: ${{ secrets.SSH_PRIVATE_KEY }}
+                    # We pass the Git SHA as an environment variable to the VM session
+                    envs: GITHUB_SHA
+                    script: |
+                        # Pass the Image Tag variable to docker compose 
+                        export IMAGE_TAG=${{github.event.client_payload.IMAGE_TAG}}
+
+                        # Check which blue/green container is running 
+                        if [ -n "$(docker ps -q -f name=spring-api-blue)" ];then
+                            TARGET_CONTAINER="spring-api-green"
+                            CURRENT_CONTAINER="spring-api-blue"
+                            PORT=8080
+                        else:
+                            TARGET_CONTAINER="spring-api-blue"
+                            CURRENT_CONTAINER="spring-api-green"
+                            PORT=8082
+                        fi
+                        echo "Deploying to $TARGET_CONTAINER on port $PORT..."
+
+                        # Pull the changes on that image 
+                        docker compose pull TARGET_CONTAINER
+
+                        # For now i would stop the previous container due to only having 1Gb of ram 
+                        docker compose down CURRENT_CONTAINER
+
+                        # run the new container
+                        docker compose up -d TARGET_CONTAINER
+
+                        # Test the health of the new container 
+                        success=0
+                        for i in {1..4}; do
+                            if curl -s http://localhost:$PORT/health | grep -q "UP"; then
+                                success=1
+                                break
+                            fi
+                            echo "Waiting for $TARGET_CONTAINER health check... ($i/4)"
+                            sleep 2
+                        done
+
+                        if [ $success -eq 0 ]; then
+                            echo "Health check failed! Staying on $CURRENT_CONTAINER."
+                            docker compose stop $TARGET_CONTAINER
+                            exit 1
+                        fi    
+
+                        # change nginx port and reload it 
+                        sudo sed -i -r "s/localhost:[0-9]+/localhost:$PORT/" /etc/nginx/sites-available/default
+            
+                        # Reload Nginx instantly with zero downtime
+                        sudo systemctl reload nginx
+
+                        # Run cleanup for not used images 
+                        docker images prune -af --filter "until=24h"
+
+
+
+
+    
+
+
+
+

@@ -1,0 +1,84 @@
+name: This workflow is reponsible for continous integration
+on:
+    push:
+        branches: [main]
+        paths-ignore: ["*.md"]
+    pull_request:
+        branches: [main]
+
+permissions:
+  contents: read      
+  security-events: write 
+  actions: read
+
+env:
+    JAVA_VERSION: 25
+    IMAGE_NAME: myspringapp
+
+
+# added concurrency so when we start new workflow we stop the previous one
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    changes:
+        runs-on: ubuntu-latest
+        outputs:
+            backend: ${{steps.filter.outputs.backend}}
+        steps:
+            -   name: Checkout the code
+                uses: actions/checkout@v4
+            -   name: Track changes in files
+                uses: dorny/paths-filter@v3
+                id: filter
+                with: 
+                    filters: |
+                        backend: 
+                            -   'src/**'
+                            -   'pom.xml'
+
+    security-test:
+        uses: ./.github/workflows/reusable-security-test.yml
+        with:
+            LANGUAGE: Java
+            TARGET_ENV: Staging
+        secrets:
+            GG_API_KEY: ${{ secrets.GITGUARDIAN_API_KEY }}
+            SNYK_TOKEN: ${{ secrets.SNYK }}
+
+
+# build docker image
+    build-deploy-image:
+        needs: [security-test,changes]
+        if: needs.changes.outputs.backend == 'true' && github.event_name != 'pull_request'
+        uses: ./.github/workflows/reusable-docker-build-image.yml
+        with:
+            IMAGE_NAME: "my-spring-app-v3"
+            TARGET_ENV: Staging
+        secrets: 
+             DOCKER_USERNAME: ${{secrets.DOCKERUSERNAME}}
+             DOCKER_PASSWORD: ${{secrets.DOCKERPASSWORD}}
+
+    cd-pipeline:
+        needs: [ build-deploy-image ]
+        runs-on: ubuntu-latest
+        environment: Prod
+        steps:
+            -   name: Emit dispatch event
+                uses: peter-evans/repository-dispatch@v3
+                with:
+                    token: ${{ secrets.MY_PAT }}
+                    repository: chedy322/Product-Management-System
+                    event-type: cd-pipeline-event
+                    client-payload: |
+                        {
+                            "IMAGE_NAME": "my-spring-app-v3",
+                            "IMAGE_TAG": "${{needs.build-deploy-image.outputs.image_tag}}",
+                            "ENVIRONMENT": "Prod"
+                        }
+
+                
+            
+            
+

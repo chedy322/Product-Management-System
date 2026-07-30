@@ -1,0 +1,78 @@
+name: Build docker image 
+
+on: 
+    workflow_call:
+        inputs:
+            IMAGE_NAME:
+                type: string 
+                required: true 
+                description: Image name to docker registry 
+            TARGET_ENV:
+                required: true
+                type: string
+
+        secrets:
+            DOCKER_USERNAME:
+                description: Registry owner username 
+            DOCKER_PASSWORD:
+                description: Token to log to docker registry
+        outputs:
+            image_tag: 
+                value: ${{jobs.build-test-deploy-image.outputs.final_tag}}
+
+        
+    
+            
+jobs:
+    build-test-deploy-image:
+        runs-on: ubuntu-latest
+        environment: ${{inputs.TARGET_ENV}}
+        outputs:
+            final_tag: ${{steps.github_sha.outputs.tag}}
+        steps:
+            -   name: Checkout code repository
+                uses: actions/checkout@v4
+            
+            -   name: Login in to docker
+                uses: docker/login-action@v3
+                with:
+                    username: ${{secrets.DOCKER_USERNAME}}
+                    password: ${{secrets.DOCKER_PASSWORD}}
+            
+            -   name: generate github sha 
+                id: github_sha
+                run: echo "tag=${{github.sha}}" >> $GITHUB_OUTPUT
+
+            -   name: Set up Docker Buildx
+                uses: docker/setup-buildx-action@v3        
+
+            -   name: build and push to docker hub registry
+                uses: docker/build-push-action@v5
+                with:
+                    context: .
+                    cache-from: type=gha
+                    cache-to: type=gha,mode=max 
+                    load: true
+                    push: false 
+                    tags: |
+                        docker.io/${{secrets.DOCKER_USERNAME}}/${{inputs.image_name}}:${{github.sha}}
+                        docker.io/${{secrets.DOCKER_USERNAME}}/${{inputs.image_name}}:latest
+                        
+
+            -   name: Run Trivy test for image before pushing to registry  
+                uses: aquasecurity/trivy-action@v0.36.0
+                with:
+                    image-ref: docker.io/${{secrets.DOCKER_USERNAME}}/${{inputs.image_name}}:${{github.sha}}
+                    format: 'table'
+                    exit-code: '1'
+                    ignore-unfixed: true
+                    vuln-type: 'os,library'
+                    severity: 'CRITICAL,HIGH'  
+            
+            -   name: Push image to registry 
+                if: success()
+                run: |
+                     docker push docker.io/${{secrets.DOCKER_USERNAME}}/${{inputs.image_name}}:${{github.sha}}
+                     docker push docker.io/${{secrets.DOCKER_USERNAME}}/${{inputs.image_name}}:latest
+                
+                    

@@ -1,0 +1,19 @@
+package com.example.demo.Application.product.listeners;
+
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import com.example.demo.Domain.product.events.ProductCreatedEvent;
+
+@Component
+public class SendEmailOnProductCreated {
+    public SendEmailOnProductCreated(){
+    }
+
+    @Async
+    @EventListener
+    public void handle(ProductCreatedEvent event){
+        System.out.println(event.productName()+"Is created succesfully.Sending Email...");
+    }
+}

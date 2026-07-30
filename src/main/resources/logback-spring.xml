@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_FILE_NAME" value="application" />
+
+    <appender name="ConsoleOutput" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <Pattern>%white(%d{ISO8601}) %highlight(%-5level) [%yellow(%t)] %cyan([%X{traceId:-}, %X{spanId:-}]) : %msg%n%throwable</Pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="ConsoleOutput" />
+    </root>
+
+    <logger name="com.example.demo" level="debug" />
+</configuration>
